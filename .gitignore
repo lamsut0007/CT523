@@ -1,0 +1,43 @@
+# Docs
+docs
+
+# Dependencies
+/vendor/
+
+# Composer
+composer.phar
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# Cache
+/cache/
+/tmp/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# PHPUnit
+.phpunit.result.cache
+
+# Coverage
+coverage/
+.clover.xml
+
+# Node (nếu có frontend)
+node_modules/
+dist/
+build/
+
+# XAMPP
+xampp/
