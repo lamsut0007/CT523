@@ -1,40 +1,40 @@
 <?php
-$pageTitle = "Danh sách phòng - Local Homestay";
+$pageTitle = "Danh sách phòng - OASIS Homestay";
 include "includes/db.php";
 include "includes/functions.php";
 
-$checkIn = isset($_GET["check_in"]) ? trim($_GET["check_in"]) : "";
-$checkOut = isset($_GET["check_out"]) ? trim($_GET["check_out"]) : "";
-$guests = isset($_GET["guests"]) ? (int) $_GET["guests"] : 2;
-$dateError = "";
-$roomQueryError = "";
-$hasSearch = isset($_GET["check_in"]) || isset($_GET["check_out"]) || isset($_GET["guests"]);
+$ngayNhanPhong = isset($_GET["ngay_nhan_phong"]) ? trim($_GET["ngay_nhan_phong"]) : "";
+$ngayTraPhong = isset($_GET["ngay_tra_phong"]) ? trim($_GET["ngay_tra_phong"]) : "";
+$soKhach = isset($_GET["so_khach"]) ? (int) $_GET["so_khach"] : 2;
+$loiNgay = "";
+$loiTaiPhong = "";
+$coTimKiem = isset($_GET["ngay_nhan_phong"]) || isset($_GET["ngay_tra_phong"]) || isset($_GET["so_khach"]);
 
-if ($guests < 1) {
-    $guests = 1;
+if ($soKhach < 1) {
+    $soKhach = 1;
 }
 
-if (($checkIn == "" && $checkOut != "") || ($checkIn != "" && $checkOut == "")) {
-    $dateError = "Vui lòng nhập đầy đủ ngày nhận phòng và ngày trả phòng.";
-    $checkIn = "";
-    $checkOut = "";
-} elseif (!is_valid_search_date($checkIn, $checkOut)) {
-    $dateError = "Ngày trả phòng phải sau ngày nhận phòng.";
-    $checkIn = "";
-    $checkOut = "";
+if (($ngayNhanPhong == "" && $ngayTraPhong != "") || ($ngayNhanPhong != "" && $ngayTraPhong == "")) {
+    $loiNgay = "Nhập giúp tụi mình đủ ngày nhận và ngày trả nha, chứ một nửa lịch thì phòng cũng bối rối.";
+    $ngayNhanPhong = "";
+    $ngayTraPhong = "";
+} elseif (!ngay_tim_kiem_hop_le($ngayNhanPhong, $ngayTraPhong)) {
+    $loiNgay = "Ngày trả phòng phải sau ngày nhận phòng. Đi chơi thì mình cứ đi tới, đừng quay ngược thời gian.";
+    $ngayNhanPhong = "";
+    $ngayTraPhong = "";
 }
 
-$rooms = get_available_rooms($conn, $checkIn, $checkOut, $guests);
+$danhSachPhong = lay_phong_con_trong($conn, $ngayNhanPhong, $ngayTraPhong, $soKhach);
 include "includes/header.php";
 ?>
 
 <main>
     <section class="page-heading">
         <p class="eyebrow">Danh sách phòng</p>
-        <h1>Chọn phòng phù hợp với lịch lưu trú</h1>
+        <h1>Chọn một căn phòng vừa người, vừa mood</h1>
         <p>
-            Nhập ngày nhận, ngày trả và số khách để xem những phòng còn trống.
-            Nếu không nhập ngày, trang sẽ hiển thị các phòng đang sẵn sàng nhận khách.
+            Nhập ngày ở và số khách, tụi mình sẽ lọc ra những phòng còn thở được trong lịch đó.<br>
+            Không nhập ngày thì trang chỉ hiện các phòng đang sẵn sàng nhận khách.
         </p>
     </section>
 
@@ -44,17 +44,17 @@ include "includes/header.php";
             <div class="form-row">
                 <label>
                     Ngày nhận phòng
-                    <input type="date" name="check_in" value="<?php echo h($checkIn); ?>">
+                    <input type="date" name="ngay_nhan_phong" value="<?php echo h($ngayNhanPhong); ?>">
                 </label>
 
                 <label>
                     Ngày trả phòng
-                    <input type="date" name="check_out" value="<?php echo h($checkOut); ?>">
+                    <input type="date" name="ngay_tra_phong" value="<?php echo h($ngayTraPhong); ?>">
                 </label>
 
                 <label>
                     Số khách
-                    <input type="number" name="guests" min="1" value="<?php echo h($guests); ?>">
+                    <input type="number" name="so_khach" min="1" value="<?php echo h($soKhach); ?>">
                 </label>
 
                 <button type="submit">Tìm phòng</button>
@@ -65,12 +65,12 @@ include "includes/header.php";
             <p class="alert"><?php echo h($dbError); ?></p>
         <?php } ?>
 
-        <?php if ($dateError != "") { ?>
-            <p class="alert"><?php echo h($dateError); ?></p>
+        <?php if ($loiNgay != "") { ?>
+            <p class="alert"><?php echo h($loiNgay); ?></p>
         <?php } ?>
 
-        <?php if ($roomQueryError != "") { ?>
-            <p class="alert"><?php echo h($roomQueryError); ?></p>
+        <?php if ($loiTaiPhong != "") { ?>
+            <p class="alert"><?php echo h($loiTaiPhong); ?></p>
         <?php } ?>
     </section>
 
@@ -78,39 +78,36 @@ include "includes/header.php";
         <div class="section-title">
             <p class="eyebrow">Phòng lưu trú</p>
             <h2>
-                <?php if ($checkIn != "" && $checkOut != "") { ?>
-                    Phòng còn trống từ <?php echo h(format_date_vi($checkIn)); ?> đến <?php echo h(format_date_vi($checkOut)); ?>
+                <?php if ($ngayNhanPhong != "" && $ngayTraPhong != "") { ?>
+                    Phòng còn trống từ <?php echo h(dinh_dang_ngay($ngayNhanPhong)); ?> đến <?php echo h(dinh_dang_ngay($ngayTraPhong)); ?>
                 <?php } else { ?>
-                    Phòng đang nhận khách
+                    Những phòng đang mở cửa chờ khách
                 <?php } ?>
             </h2>
-            <?php if ($hasSearch && $dateError == "" && count($rooms) > 0) { ?>
-                <p class="section-note">Tìm thấy <?php echo count($rooms); ?> phòng phù hợp cho <?php echo h($guests); ?> khách.</p>
-            <?php } ?>
         </div>
 
         <div class="room-list">
-            <?php if (count($rooms) > 0) { ?>
-                <?php foreach ($rooms as $room) { ?>
+            <?php if (count($danhSachPhong) > 0) { ?>
+                <?php foreach ($danhSachPhong as $phong) { ?>
                     <article class="room-card">
                         <div class="room-image">
-                            <img src="<?php echo h($room["image_path"]); ?>" alt="<?php echo h($room["room_name"]); ?>">
+                            <img src="<?php echo h($phong["duong_dan_hinh"]); ?>" alt="<?php echo h($phong["ten_phong"]); ?>">
                         </div>
                         <div class="room-info">
-                            <p class="badge"><?php echo h($room["room_code"]); ?></p>
-                            <h3><?php echo h($room["room_name"]); ?></h3>
-                            <p><?php echo h($room["description"]); ?></p>
+                            <p class="badge"><?php echo h($phong["ma_so_phong"]); ?></p>
+                            <h3><?php echo h($phong["ten_phong"]); ?></h3>
+                            <p><?php echo h($phong["mo_ta"]); ?></p>
                             <p class="room-meta">
-                                Loại phòng: <?php echo h($room["type_name"]); ?> |
-                                Sức chứa: <?php echo h($room["capacity"]); ?> khách
+                                Loại phòng: <?php echo h($phong["ten_loai_phong"]); ?> |
+                                Sức chứa: <?php echo h($phong["suc_chua"]); ?> khách
                             </p>
-                            <p class="price"><?php echo money_vnd($room["price_per_day"]); ?> / đêm</p>
-                            <p class="muted"><?php echo money_vnd($room["price_per_hour"]); ?> / giờ</p>
+                            <p class="price"><?php echo tien_viet_nam($phong["gia_theo_ngay"]); ?> / đêm</p>
+                            <p class="muted"><?php echo tien_viet_nam($phong["gia_theo_gio"]); ?> / giờ</p>
                         </div>
                     </article>
                 <?php } ?>
             <?php } else { ?>
-                <p class="empty">Hiện chưa có phòng phù hợp. Vui lòng thử ngày khác hoặc giảm số khách.</p>
+                <p class="empty">Chưa thấy phòng nào hợp lịch này. Thử đổi ngày hoặc giảm số khách một chút nha.</p>
             <?php } ?>
         </div>
     </section>

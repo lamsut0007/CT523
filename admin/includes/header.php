@@ -9,7 +9,7 @@
 <body>
     <header class="admin-header">
         <div class="admin-container admin-nav">
-            <a class="admin-logo" href="index.php">Local Homestay Admin</a>
+            <a class="admin-logo" href="index.php">OASIS Homestay Admin</a>
             <nav>
                 <a href="index.php">Trang chủ</a>
                 <a href="rooms.php">Quản lý phòng</a>

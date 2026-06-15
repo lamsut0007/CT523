@@ -6,7 +6,7 @@ body {
     margin: 0;
     font-family: Arial, Helvetica, sans-serif;
     color: #24302f;
-    background: #f4f1e8;
+    background: #f5f3ef;
     line-height: 1.6;
 }
 
@@ -212,7 +212,7 @@ button,
     display: block;
 }
 
-.status-badge {
+.nhan-trang-thai {
     display: inline-block;
     padding: 4px 8px;
     border-radius: 4px;
@@ -220,17 +220,17 @@ button,
     font-weight: bold;
 }
 
-.status-available {
+.trang-thai-con-trong {
     background: #eaf5ef;
     color: #1f5f4a;
 }
 
-.status-maintenance {
+.trang-thai-tu-sua {
     background: #fff3df;
     color: #8a5a17;
 }
 
-.status-form {
+.form-trang-thai {
     display: grid;
     grid-template-columns: 1fr auto;
     gap: 8px;
@@ -290,7 +290,7 @@ button,
         padding: 6px 0;
     }
 
-    .status-form {
+    .form-trang-thai {
         grid-template-columns: 1fr;
     }
 }

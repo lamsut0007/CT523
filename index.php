@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "Local Homestay";
+$pageTitle = "OASIS Homestay";
 include "includes/header.php";
 ?>
 
@@ -8,7 +8,7 @@ include "includes/header.php";
         <p class="eyebrow">Homestay Cần Thơ</p>
         <h1>Một chỗ nghỉ yên tĩnh gần trung tâm Ninh Kiều</h1>
         <p>
-            Local Homestay mang lại cảm giác gần gũi như ở nhà, có không gian thoáng,
+            OASIS Homestay mang lại cảm giác gần gũi như ở nhà, có không gian thoáng mát,
             phòng sạch sẽ và lịch đặt rõ ràng cho khách đi du lịch, công tác hoặc nghỉ cuối tuần.
         </p>
         <a class="button" href="rooms.php">Xem phòng trống</a>
@@ -22,17 +22,17 @@ include "includes/header.php";
             <div class="form-row">
                 <label>
                     Ngày nhận phòng
-                    <input type="date" name="check_in">
+                    <input type="date" name="ngay_nhan_phong">
                 </label>
 
                 <label>
                     Ngày trả phòng
-                    <input type="date" name="check_out">
+                    <input type="date" name="ngay_tra_phong">
                 </label>
 
                 <label>
                     Số khách
-                    <input type="number" name="guests" min="1" value="2">
+                    <input type="number" name="so_khach" min="1" value="2">
                 </label>
 
                 <button type="submit">Kiểm tra phòng</button>
@@ -66,7 +66,7 @@ include "includes/header.php";
 
         <div class="image-grid">
             <img class="image-large" src="assets/room/1.jpg" alt="Không gian phòng homestay">
-            <img src="assets/room/3.jpg" alt="Phòng nghỉ sáng sủa">
+            <img src="assets/room/2.jpg" alt="Phòng nghỉ sáng sủa">
             <img src="assets/room/5.jpg" alt="Phòng gia đình tại homestay">
         </div>
     </section>

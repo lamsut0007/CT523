@@ -51,10 +51,10 @@
         }
 
         .hero {
-            min-height: 440px;
+            min-height: 400px;
             background:
                 linear-gradient(rgba(17, 36, 32, 0.50), rgba(17, 36, 32, 0.40)),
-                url("assets/room/2.jpg");
+                url("assets/room/3.jpg");
             background-size: cover;
             background-position: center;
             color: #ffffff;
@@ -63,9 +63,9 @@
         }
 
         .hero-content {
-            width: min(1100px, 92%);
+            width: min(1000px, 90%);
             margin: 0 auto;
-            max-width: 680px;
+            max-width: 600px;
         }
 
         .hero h1 {
@@ -80,7 +80,7 @@
             letter-spacing: 0;
             font-size: 13px;
             font-weight: bold;
-            color: #d99b42;
+            color: #ac7a35;
         }
 
         .button,
@@ -400,7 +400,7 @@
 <body>
     <header class="site-header">
         <div class="container nav">
-            <a class="logo" href="index.php">Local Homestay</a>
+            <a class="logo" href="index.php">OASIS Homestay</a>
             <nav class="menu">
                 <a href="index.php">Trang chủ</a>
                 <a href="rooms.php">Phòng</a>

@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <main class="login-page">
         <section class="login-card">
             <h1>Đăng nhập Admin</h1>
-            <p>Quản lý trạng thái phòng của Local Homestay.</p>
+            <p>Quản lý trạng thái phòng của OASIS Homestay.</p>
 
             <?php if ($error != "") { ?>
                 <p class="alert"><?php echo h($error); ?></p>
