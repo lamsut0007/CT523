@@ -403,7 +403,6 @@
             <a class="logo" href="index.php">OASIS Homestay</a>
             <nav class="menu">
                 <a href="index.php">Trang chủ</a>
-                <a href="rooms.php">Phòng</a>
                 <a href="#">Đặt lịch</a>
                 <a href="#">Liên hệ</a>
             </nav>
