@@ -3,13 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo h($pageTitle); ?></title>
-    <link rel="stylesheet" href="assets/admin.css">
+    <title><?php echo $pageTitle; ?></title>
+    <link rel="icon" href="../assets/logo/oasis-logo-short.png" type="image/svg+xml">
+    <link rel="stylesheet" href="includes/admin.css">
 </head>
 <body>
     <header class="admin-header">
         <div class="admin-container admin-nav">
-            <a class="admin-logo" href="index.php">OASIS Homestay Admin</a>
+            <a class="admin-logo" href="index.php" aria-label="OASIS Homestay Admin">
+                <img class="admin-logo-mark" src="../assets/logo/oasis-logo.png" alt="">
+                <span>OASIS Homestay Admin</span>
+            </a>
             <nav>
                 <a href="index.php">Trang chủ</a>
                 <a href="rooms.php">Quản lý phòng</a>

@@ -1,8 +1,9 @@
 <?php
 include "includes/auth.php";
+include "../includes/db.php";
 include "../includes/functions.php";
 
-if (is_admin_logged_in()) {
+if (da_dang_nhap_admin()) {
     header("Location: rooms.php");
     exit;
 }
@@ -14,9 +15,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = isset($_POST["username"]) ? trim($_POST["username"]) : "";
     $password = isset($_POST["password"]) ? trim($_POST["password"]) : "";
 
-    if ($username == $adminUsername && $password == $adminPassword) {
-        $_SESSION["admin_logged_in"] = true;
-        $_SESSION["admin_username"] = $username;
+    if ($conn == null) {
+        $error = $dbError;
+    } elseif (dang_nhap_admin($conn, $username, $password)) {
         header("Location: rooms.php");
         exit;
     } else {
@@ -31,11 +32,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo h($pageTitle); ?></title>
-    <link rel="stylesheet" href="assets/admin.css">
+    <link rel="icon" href="../assets/logo/oasis-logo-short.png" type="image/svg+xml">
+    <link rel="stylesheet" href="includes/admin.css">
 </head>
 <body>
     <main class="login-page">
         <section class="login-card">
+            <a class="login-brand" href="../index.php" aria-label="OASIS Homestay">
+                <img class="login-brand-mark" src="../assets/logo/oasis-logo.png" alt="">
+                <span class="login-brand-name">OASIS Homestay</span>
+            </a>
             <h1>Đăng nhập Admin</h1>
             <p>Quản lý trạng thái phòng của OASIS Homestay.</p>
 
