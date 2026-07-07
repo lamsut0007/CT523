@@ -14,7 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $trangThai = isset($_POST["trang_thai"]) ? trim($_POST["trang_thai"]) : "";
 
     if ($idPhong <= 0 || !in_array($trangThai, array("con_trong", "tu_sua"))) {
-        $loi = "Dữ liệu gửi lên hơi sai sai. Chọn lại trạng thái phòng giúp mình nha.";
+        $loi = "Dữ liệu gửi lên chưa đúng. Chọn lại trạng thái phòng giúp mình nha.";
     } elseif ($conn == null) {
         $loi = $dbError;
     } else {
@@ -24,13 +24,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($stmt) {
             $stmt->bind_param("si", $trangThai, $idPhong);
             if ($stmt->execute()) {
-                $thongBao = "Đã cập nhật trạng thái phòng. Một cú lưu nhỏ, căn nhà gọn hơn một chút.";
+                $thongBao = "Đã cập nhật trạng thái phòng.";
             } else {
                 $loi = "Chưa lưu được trạng thái phòng. Thử lại giúp mình nha.";
             }
             $stmt->close();
         } else {
-            $loi = "Chưa chuẩn bị được câu lệnh cập nhật. Khả năng cao database đang lệch schema.";
+            $loi = "Chưa chuẩn bị được câu lệnh cập nhật. Có vẻ database đang lệch schema.";
         }
     }
 }
@@ -64,7 +64,7 @@ include "includes/header.php";
     <div class="admin-container">
         <section class="page-title">
             <h1>Quản lý phòng</h1>
-            <p>Admin chỉ chạm vào thứ khách nhìn thấy: phòng nào còn trống, phòng nào đang cần tu sửa. Vậy là đủ cho bước đầu.</p>
+            <p>Admin chỉ chạm vào thứ khách nhìn thấy: phòng nào còn trống, phòng nào đang cần tu sửa.</p>
         </section>
 
         <?php if ($thongBao != "") { ?>
@@ -123,7 +123,7 @@ include "includes/header.php";
                         <?php } ?>
                     <?php } else { ?>
                         <tr>
-                            <td colspan="7">Chưa có phòng nào trong hệ thống. Nhà còn im ắng quá.</td>
+                            <td colspan="7">Chưa có phòng nào trong hệ thống. Chắc database đang trống.</td>
                         </tr>
                     <?php } ?>
                 </tbody>

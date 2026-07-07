@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $pageTitle; ?></title>
-    <link rel="icon" href="../assets/logo/oasis-logo-short.png" type="image/svg+xml">
+    <link rel="icon" href="../assets/logo/oasis-logo-short.png" type="image/png">
     <link rel="stylesheet" href="includes/admin.css">
 </head>
 <body>
     <header class="admin-header">
         <div class="admin-container admin-nav">
             <a class="admin-logo" href="index.php" aria-label="OASIS Homestay Admin">
-                <img class="admin-logo-mark" src="../assets/logo/oasis-logo.png" alt="">
+                <img class="admin-logo-mark" src="../assets/logo/oasis-logo.png" alt="OASIS Homestay">
                 <span>OASIS Homestay Admin</span>
             </a>
             <nav>

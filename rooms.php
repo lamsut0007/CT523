@@ -15,11 +15,11 @@ if ($soKhach < 1) {
 }
 
 if (($ngayNhanPhong == "" && $ngayTraPhong != "") || ($ngayNhanPhong != "" && $ngayTraPhong == "")) {
-    $loiNgay = "Nhập giúp tụi mình đủ ngày nhận và ngày trả nha, chứ một nửa lịch thì phòng cũng bối rối.";
+    $loiNgay = "Nhập giúp tụi mình đủ ngày nhận và ngày trả nha, chỉ một nửa lịch thì hệ thống không biết lọc sao.";
     $ngayNhanPhong = "";
     $ngayTraPhong = "";
 } elseif (!ngay_tim_kiem_hop_le($ngayNhanPhong, $ngayTraPhong)) {
-    $loiNgay = "Ngày trả phòng phải sau ngày nhận phòng. Đi chơi thì mình cứ đi tới, đừng quay ngược thời gian.";
+    $loiNgay = "Ngày trả phòng phải sau ngày nhận phòng. Mình đi biển vui thôi, đừng đảo ngược thời gian nha.";
     $ngayNhanPhong = "";
     $ngayTraPhong = "";
 }
@@ -31,10 +31,10 @@ include "includes/header.php";
 <main>
     <section class="page-heading">
         <p class="eyebrow">Danh sách phòng</p>
-        <h1>Chọn một căn phòng vừa người, vừa mood</h1>
+        <h1>Chọn một căn phòng vừa ngắm biển, vừa nghỉ cho đúng mood Hòn Sơn</h1>
         <p>
-            Nhập ngày ở và số khách, tụi mình sẽ lọc ra những phòng còn thở được trong lịch đó.<br>
-            Không nhập ngày thì trang chỉ hiện các phòng đang sẵn sàng nhận khách.
+            Nhập ngày ở và số khách, tụi mình sẽ lọc ra những phòng còn trống trong đúng khung thời gian đó.<br>
+            Không nhập ngày thì trang chỉ hiển thị các phòng đang sẵn sàng nhận khách.
         </p>
     </section>
 

@@ -5,11 +5,11 @@ include "includes/header.php";
 
 <section class="hero">
     <div class="hero-content">
-        <p class="eyebrow">Homestay Cần Thơ</p>
-        <h1>Một chỗ nghỉ yên tĩnh gần trung tâm Ninh Kiều</h1>
+        <p class="eyebrowlight">OASIS Homestay</p>
+        <h1>Một chỗ nghỉ nép mình bên biển, gió mát và rất đúng chất đảo</h1>
         <p>
-            OASIS Homestay mang lại cảm giác gần gũi như ở nhà, có không gian thoáng mát,
-            phòng sạch sẽ và lịch đặt rõ ràng cho khách đi du lịch, công tác hoặc nghỉ cuối tuần.
+            OASIS Homestay mang tinh thần nghỉ dưỡng gần biển, nhẹ nhàng và thoáng đãng.
+            Không gian sạch sẽ, riêng tư, phù hợp cho khách muốn rời phố một nhịp để nghe sóng và thở chậm lại.
         </p>
         <a class="button" href="rooms.php">Xem phòng trống</a>
     </div>
@@ -42,11 +42,11 @@ include "includes/header.php";
 
     <section class="section home-intro">
         <div>
-            <p class="eyebrow">Không gian nghỉ ngơi</p>
-            <h2>Ấm cúng, riêng tư và đủ tiện nghi cho một chuyến đi thoải mái</h2>
+            <p class="eyebrow">Không gian nghỉ dưỡng</p>
+            <h2>Ấm cúng, thoáng gió và đủ tiện nghi cho một chuyến đi ra đảo thật nhẹ đầu</h2>
             <p>
-                Homestay được thiết kế theo phong cách giản dị, nhiều ánh sáng tự nhiên,
-                phù hợp cho khách muốn nghỉ lại gần trung tâm nhưng vẫn cần một nơi yên tĩnh.
+                Homestay được thiết kế theo cảm hứng biển đảo, nhiều ánh sáng tự nhiên và
+                gam màu dịu mắt để khách vừa nghỉ ngơi vừa cảm nhận được chất Hòn Sơn rất riêng.
             </p>
             <div class="stats">
                 <div>
@@ -79,8 +79,8 @@ include "includes/header.php";
 
         <div class="amenity-grid">
             <div class="amenity-card">
-                <h3>Vị trí thuận tiện</h3>
-                <p>Dễ di chuyển đến bến Ninh Kiều, chợ đêm, quán ăn và các điểm tham quan trong thành phố.</p>
+                <h3>Gần biển, dễ thở</h3>
+                <p>Không gian hợp cho khách thích đi bộ ra bờ biển, ngắm bình minh và trở về nghỉ ngơi thật nhanh.</p>
             </div>
             <div class="amenity-card">
                 <h3>Phòng rõ giá</h3>
@@ -88,18 +88,18 @@ include "includes/header.php";
             </div>
             <div class="amenity-card">
                 <h3>Lịch đặt minh bạch</h3>
-                <p>Khi khách nhập ngày lưu trú, hệ thống chỉ hiển thị những phòng còn trống và đủ sức chứa.</p>
+                <p>Khi nhập ngày lưu trú, hệ thống chỉ hiển thị những phòng còn trống và đủ sức chứa.</p>
             </div>
         </div>
     </section>
 
     <section class="section location-band">
         <div>
-            <p class="eyebrow">Khu vực Ninh Kiều</p>
-            <h2>Gần trung tâm nhưng vẫn giữ được sự riêng tư</h2>
+            <p class="eyebrow">Khu vực Hòn Sơn</p>
+            <h2>Gần biển nhưng vẫn giữ được sự riêng tư và yên tĩnh</h2>
             <p>
-                Phù hợp cho khách muốn khám phá Cần Thơ trong ngày, nghỉ lại qua đêm,
-                hoặc cần một nơi gọn gàng để làm việc và thư giãn.
+                Phù hợp cho khách muốn nghỉ qua đêm trên đảo, đi chơi, ăn hải sản, hoặc cần một nơi gọn gàng
+                để dừng chân trước khi tiếp tục hành trình.
             </p>
         </div>
         <a class="button" href="rooms.php">Chọn phòng phù hợp</a>

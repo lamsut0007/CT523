@@ -38,7 +38,7 @@ include "includes/header.php";
     <div class="admin-container">
         <section class="page-title">
             <h1>Trang chủ Admin</h1>
-            <p>Một góc nhỏ để nhìn nhanh tình trạng phòng. Không màu mè quá, nhưng đủ biết hôm nay nhà mình đang thở ra sao.</p>
+            <p>Một góc nhỏ để nhìn nhanh tình trạng phòng trên đảo. Gọn, rõ và đủ dùng.</p>
         </section>
 
         <?php if ($loiThongKe != "") { ?>

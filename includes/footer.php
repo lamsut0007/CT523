@@ -2,7 +2,7 @@
         <div class="container footer-content">
             <div>
                 <strong>OASIS Homestay</strong>
-                <p>Địa chỉ: 14/16B Đường Hòa Bình, Ninh Kiều, Thành phố Cần Thơ</p>
+                <p>Địa chỉ: Đảo Hòn Sơn, huyện Kiên Hải, Kiên Giang</p>
             </div>
             <div>
                 <p>
