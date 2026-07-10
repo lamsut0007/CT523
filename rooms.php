@@ -5,6 +5,8 @@ include "includes/functions.php";
 
 $ngayNhanPhong = isset($_GET["ngay_nhan_phong"]) ? trim($_GET["ngay_nhan_phong"]) : "";
 $ngayTraPhong = isset($_GET["ngay_tra_phong"]) ? trim($_GET["ngay_tra_phong"]) : "";
+$gioNhanPhong = isset($_GET["gio_nhan_phong"]) ? trim($_GET["gio_nhan_phong"]) : "14:00";
+$gioTraPhong = isset($_GET["gio_tra_phong"]) ? trim($_GET["gio_tra_phong"]) : "12:00";
 $soKhach = isset($_GET["so_khach"]) ? (int) $_GET["so_khach"] : 2;
 $loiNgay = "";
 $loiTaiPhong = "";
@@ -18,13 +20,13 @@ if (($ngayNhanPhong == "" && $ngayTraPhong != "") || ($ngayNhanPhong != "" && $n
     $loiNgay = "Nhập giúp tụi mình đủ ngày nhận và ngày trả nha, chỉ một nửa lịch thì hệ thống không biết lọc sao.";
     $ngayNhanPhong = "";
     $ngayTraPhong = "";
-} elseif (!ngay_tim_kiem_hop_le($ngayNhanPhong, $ngayTraPhong)) {
+} elseif (!ngay_tim_kiem_hop_le($ngayNhanPhong, $ngayTraPhong, $gioNhanPhong, $gioTraPhong)) {
     $loiNgay = "Ngày trả phòng phải sau ngày nhận phòng. Mình đi biển vui thôi, đừng đảo ngược thời gian nha.";
     $ngayNhanPhong = "";
     $ngayTraPhong = "";
 }
 
-$danhSachPhong = lay_phong_con_trong($conn, $ngayNhanPhong, $ngayTraPhong, $soKhach);
+$danhSachPhong = lay_phong_dang_hoat_dong($conn, $ngayNhanPhong, $ngayTraPhong, $soKhach, $gioNhanPhong, $gioTraPhong);
 include "includes/header.php";
 ?>
 
@@ -34,30 +36,48 @@ include "includes/header.php";
         <h1>Chọn một căn phòng vừa ngắm biển, vừa nghỉ cho đúng mood Hòn Sơn</h1>
         <p>
             Nhập ngày ở và số khách, tụi mình sẽ lọc ra những phòng còn trống trong đúng khung thời gian đó.<br>
-            Không nhập ngày thì trang chỉ hiển thị các phòng đang sẵn sàng nhận khách.
+            Không nhập ngày thì trang chỉ hiển thị các phòng theo sức chứa.
         </p>
     </section>
 
     <section class="search-box search-box-normal">
-        <h2>Kiểm tra phòng còn trống</h2>
+        <h2>Tìm phòng còn trống</h2>
         <form method="get" action="rooms.php">
             <div class="form-row">
-                <label>
-                    Ngày nhận phòng
-                    <input type="date" name="ngay_nhan_phong" value="<?php echo h($ngayNhanPhong); ?>">
-                </label>
+                <div class="search-left">
+                    <div class="search-left-row">
+                        <label for="ngay_nhan_phong">
+                            Ngày nhận phòng
+                            <input id="ngay_nhan_phong" type="date" name="ngay_nhan_phong" value="<?php echo h($ngayNhanPhong); ?>">
+                        </label>
 
-                <label>
-                    Ngày trả phòng
-                    <input type="date" name="ngay_tra_phong" value="<?php echo h($ngayTraPhong); ?>">
-                </label>
+                        <label for="gio_nhan_phong">
+                            Giờ nhận phòng
+                            <input id="gio_nhan_phong" type="time" name="gio_nhan_phong" value="<?php echo h($gioNhanPhong); ?>">
+                        </label>
+                    </div>
 
-                <label>
-                    Số khách
-                    <input type="number" name="so_khach" min="1" value="<?php echo h($soKhach); ?>">
-                </label>
+                    <div class="search-left-row">
+                        <label for="ngay_tra_phong">
+                            Ngày trả phòng
+                            <input id="ngay_tra_phong" type="date" name="ngay_tra_phong" value="<?php echo h($ngayTraPhong); ?>">
+                        </label>
 
-                <button type="submit">Tìm phòng</button>
+                        <label for="gio_tra_phong">
+                            Giờ trả phòng
+                            <input id="gio_tra_phong" type="time" name="gio_tra_phong" value="<?php echo h($gioTraPhong); ?>">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="search-right">
+                    <label for="so_khach">
+                        Số khách
+                        <input id="so_khach" class="search-right-label" type="number" name="so_khach" min="1" value="<?php echo h($soKhach); ?>">
+                    </label>
+                    <div class="search-right-placeholder" aria-hidden="true"></div>
+                    <button type="submit" class="big-search-button">Tìm phòng còn trống</button>
+                </div>
             </div>
         </form>
 
@@ -79,9 +99,9 @@ include "includes/header.php";
             <p class="eyebrow">Phòng lưu trú</p>
             <h2>
                 <?php if ($ngayNhanPhong != "" && $ngayTraPhong != "") { ?>
-                    Phòng còn trống từ <?php echo h(dinh_dang_ngay($ngayNhanPhong)); ?> đến <?php echo h(dinh_dang_ngay($ngayTraPhong)); ?>
+                    Phòng còn trống từ <?php echo h(dinh_dang_ngay_gio($ngayNhanPhong, $gioNhanPhong)); ?> đến <?php echo h(dinh_dang_ngay_gio($ngayTraPhong, $gioTraPhong)); ?>
                 <?php } else { ?>
-                    Những phòng đang mở cửa chờ khách
+                    Kết quả tìm kiếm theo sức chứa <?php echo h($soKhach); ?> khách
                 <?php } ?>
             </h2>
         </div>

@@ -19,7 +19,31 @@ function dinh_dang_ngay($ngay)
     return date("d/m/Y", $mocThoiGian);
 }
 
-function lay_phong_con_trong($conn, $ngayNhanPhong, $ngayTraPhong, $soKhach)
+function tao_datetime_tu_ngay_gio($ngay, $gio)
+{
+    if ($ngay == "" || $gio == "") {
+        return "";
+    }
+
+    $mocThoiGian = strtotime(trim($ngay) . " " . trim($gio));
+    if (!$mocThoiGian) {
+        return "";
+    }
+
+    return date("Y-m-d H:i:s", $mocThoiGian);
+}
+
+function dinh_dang_ngay_gio($ngay, $gio)
+{
+    $thoiGian = tao_datetime_tu_ngay_gio($ngay, $gio);
+    if ($thoiGian == "") {
+        return dinh_dang_ngay($ngay);
+    }
+
+    return date("d/m/Y H:i", strtotime($thoiGian));
+}
+
+function lay_phong_dang_hoat_dong($conn, $ngayNhanPhong, $ngayTraPhong, $soKhach, $gioNhanPhong = "14:00", $gioTraPhong = "12:00")
 {
     global $loiTaiPhong;
 
@@ -32,16 +56,26 @@ function lay_phong_con_trong($conn, $ngayNhanPhong, $ngayTraPhong, $soKhach)
         $soKhach = 1;
     }
 
-    if ($ngayNhanPhong != "" && $ngayTraPhong != "") {
-        $gioNhanPhong = $ngayNhanPhong . " 14:00:00";
-        $gioTraPhong = $ngayTraPhong . " 12:00:00";
+    $gioNhanPhong = trim($gioNhanPhong);
+    $gioTraPhong = trim($gioTraPhong);
+    if ($gioNhanPhong == "") {
+        $gioNhanPhong = "14:00";
+    }
+    if ($gioTraPhong == "") {
+        $gioTraPhong = "12:00";
+    }
+
+    $thoiGianNhanPhong = tao_datetime_tu_ngay_gio($ngayNhanPhong, $gioNhanPhong);
+    $thoiGianTraPhong = tao_datetime_tu_ngay_gio($ngayTraPhong, $gioTraPhong);
+
+    if ($ngayNhanPhong != "" && $ngayTraPhong != "" && $thoiGianNhanPhong != "" && $thoiGianTraPhong != "") {
 
         $sql = "SELECT p.id_phong, p.ma_so_phong, p.ten_phong, p.duong_dan_hinh,
                        p.trang_thai, lp.ten_loai_phong, lp.mo_ta, lp.suc_chua,
                        lp.gia_theo_gio, lp.gia_theo_ngay
                 FROM phong p
                 INNER JOIN loai_phong lp ON p.id_loai_phong = lp.id_loai_phong
-                WHERE p.trang_thai = 'con_trong'
+                WHERE p.trang_thai = 'dang_hoat_dong'
                   AND lp.suc_chua >= ?
                   AND NOT EXISTS (
                       SELECT 1
@@ -58,14 +92,14 @@ function lay_phong_con_trong($conn, $ngayNhanPhong, $ngayTraPhong, $soKhach)
             $loiTaiPhong = "Chưa kéo được danh sách phòng. Thử import lại files/db/schema.sql nha, database chắc còn đang dùng bản cũ.";
             return array();
         }
-        $stmt->bind_param("iss", $soKhach, $gioTraPhong, $gioNhanPhong);
+        $stmt->bind_param("iss", $soKhach, $thoiGianTraPhong, $thoiGianNhanPhong);
     } else {
         $sql = "SELECT p.id_phong, p.ma_so_phong, p.ten_phong, p.duong_dan_hinh,
                        p.trang_thai, lp.ten_loai_phong, lp.mo_ta, lp.suc_chua,
                        lp.gia_theo_gio, lp.gia_theo_ngay
                 FROM phong p
                 INNER JOIN loai_phong lp ON p.id_loai_phong = lp.id_loai_phong
-                WHERE p.trang_thai = 'con_trong'
+                WHERE p.trang_thai = 'dang_hoat_dong'
                   AND lp.suc_chua >= ?
                 ORDER BY lp.gia_theo_ngay ASC, p.ma_so_phong ASC";
 
@@ -89,23 +123,26 @@ function lay_phong_con_trong($conn, $ngayNhanPhong, $ngayTraPhong, $soKhach)
     return $danhSachPhong;
 }
 
-function ngay_tim_kiem_hop_le($ngayNhanPhong, $ngayTraPhong)
+function ngay_tim_kiem_hop_le($ngayNhanPhong, $ngayTraPhong, $gioNhanPhong = "14:00", $gioTraPhong = "12:00")
 {
     if ($ngayNhanPhong == "" || $ngayTraPhong == "") {
         return true;
     }
 
-    if (!strtotime($ngayNhanPhong) || !strtotime($ngayTraPhong)) {
+    $thoiGianNhanPhong = tao_datetime_tu_ngay_gio($ngayNhanPhong, $gioNhanPhong);
+    $thoiGianTraPhong = tao_datetime_tu_ngay_gio($ngayTraPhong, $gioTraPhong);
+
+    if ($thoiGianNhanPhong == "" || $thoiGianTraPhong == "") {
         return false;
     }
 
-    return strtotime($ngayTraPhong) > strtotime($ngayNhanPhong);
+    return strtotime($thoiGianTraPhong) > strtotime($thoiGianNhanPhong);
 }
 
 function ten_trang_thai_phong($trangThai)
 {
-    if ($trangThai == "con_trong") {
-        return "Còn trống";
+    if ($trangThai == "dang_hoat_dong") {
+        return "Đang hoạt động";
     }
 
     if ($trangThai == "tu_sua") {

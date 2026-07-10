@@ -7,14 +7,14 @@ include "../includes/functions.php";
 
 $pageTitle = "Trang chủ Admin";
 $tongSoPhong = 0;
-$soPhongConTrong = 0;
+$soPhongDangHoatDong = 0;
 $soPhongTuSua = 0;
 $loiThongKe = "";
 
 if ($conn != null) {
     $sql = "SELECT
                 COUNT(*) AS tong_so_phong,
-                SUM(CASE WHEN trang_thai = 'con_trong' THEN 1 ELSE 0 END) AS so_phong_con_trong,
+                SUM(CASE WHEN trang_thai = 'dang_hoat_dong' THEN 1 ELSE 0 END) AS so_phong_dang_hoat_dong,
                 SUM(CASE WHEN trang_thai = 'tu_sua' THEN 1 ELSE 0 END) AS so_phong_tu_sua
             FROM phong";
     $ketQua = $conn->query($sql);
@@ -22,7 +22,7 @@ if ($conn != null) {
     if ($ketQua) {
         $dong = $ketQua->fetch_assoc();
         $tongSoPhong = (int) $dong["tong_so_phong"];
-        $soPhongConTrong = (int) $dong["so_phong_con_trong"];
+        $soPhongDangHoatDong = (int) $dong["so_phong_dang_hoat_dong"];
         $soPhongTuSua = (int) $dong["so_phong_tu_sua"];
     } else {
         $loiThongKe = "Chưa đọc được thống kê phòng. Có thể database vẫn là bản cũ, import lại schema giúp mình nha.";
@@ -51,8 +51,8 @@ include "includes/header.php";
                 <span>Tổng số phòng</span>
             </div>
             <div class="summary-card">
-                <strong><?php echo h($soPhongConTrong); ?></strong>
-                <span>Phòng còn trống</span>
+                <strong><?php echo h($soPhongDangHoatDong); ?></strong>
+                <span>Phòng đang hoạt động</span>
             </div>
             <div class="summary-card">
                 <strong><?php echo h($soPhongTuSua); ?></strong>

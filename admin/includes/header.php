@@ -11,7 +11,7 @@
     <header class="admin-header">
         <div class="admin-container admin-nav">
             <a class="admin-logo" href="index.php" aria-label="OASIS Homestay Admin">
-                <img class="admin-logo-mark" src="../assets/logo/oasis-logo.png" alt="OASIS Homestay">
+                <img class="admin-logo-mark" src="../assets/logo/oasis-logo-short.png" alt="OASIS Homestay">
                 <span>OASIS Homestay Admin</span>
             </a>
             <nav>

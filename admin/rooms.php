@@ -13,7 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $idPhong = isset($_POST["id_phong"]) ? (int) $_POST["id_phong"] : 0;
     $trangThai = isset($_POST["trang_thai"]) ? trim($_POST["trang_thai"]) : "";
 
-    if ($idPhong <= 0 || !in_array($trangThai, array("con_trong", "tu_sua"))) {
+    if ($idPhong <= 0 || !in_array($trangThai, array("dang_hoat_dong", "tu_sua"))) {
         $loi = "Dữ liệu gửi lên chưa đúng. Chọn lại trạng thái phòng giúp mình nha.";
     } elseif ($conn == null) {
         $loi = $dbError;
@@ -64,7 +64,7 @@ include "includes/header.php";
     <div class="admin-container">
         <section class="page-title">
             <h1>Quản lý phòng</h1>
-            <p>Admin chỉ chạm vào thứ khách nhìn thấy: phòng nào còn trống, phòng nào đang cần tu sửa.</p>
+            <p>Admin chỉ chạm vào thứ khách nhìn thấy: phòng nào đang hoạt động, phòng nào đang cần tu sửa.</p>
         </section>
 
         <?php if ($thongBao != "") { ?>
@@ -103,8 +103,8 @@ include "includes/header.php";
                                 <td><?php echo h($phong["suc_chua"]); ?> khách</td>
                                 <td><?php echo tien_viet_nam($phong["gia_theo_ngay"]); ?></td>
                                 <td>
-                                    <?php if ($phong["trang_thai"] == "con_trong") { ?>
-                                        <span class="nhan-trang-thai trang-thai-con-trong">Còn trống</span>
+                                    <?php if ($phong["trang_thai"] == "dang_hoat_dong") { ?>
+                                        <span class="nhan-trang-thai trang-thai-con-trong">Đang hoạt động</span>
                                     <?php } else { ?>
                                         <span class="nhan-trang-thai trang-thai-tu-sua">Tu sửa</span>
                                     <?php } ?>
@@ -113,7 +113,7 @@ include "includes/header.php";
                                     <form class="form-trang-thai" method="post" action="rooms.php">
                                         <input type="hidden" name="id_phong" value="<?php echo h($phong["id_phong"]); ?>">
                                         <select name="trang_thai">
-                                            <option value="con_trong" <?php if ($phong["trang_thai"] == "con_trong") echo "selected"; ?>>Còn trống</option>
+                                            <option value="dang_hoat_dong" <?php if ($phong["trang_thai"] == "dang_hoat_dong") echo "selected"; ?>>Đang hoạt động</option>
                                             <option value="tu_sua" <?php if ($phong["trang_thai"] == "tu_sua") echo "selected"; ?>>Tu sửa</option>
                                         </select>
                                         <button type="submit">Lưu</button>

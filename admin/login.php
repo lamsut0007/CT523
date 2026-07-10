@@ -3,7 +3,7 @@ include "includes/auth.php";
 include "../includes/db.php";
 include "../includes/functions.php";
 
-if (da_dang_nhap_admin()) {
+if (is_admin_logged_in()) {
     header("Location: rooms.php");
     exit;
 }
@@ -40,7 +40,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <section class="login-card">
             <a class="login-brand" href="../index.php" aria-label="OASIS Homestay">
                 <img class="login-brand-mark" src="../assets/logo/oasis-logo.png" alt="OASIS Homestay">
-                <span class="login-brand-name">OASIS Homestay</span>
             </a>
             <h1>Đăng nhập Admin</h1>
             <p>Quản lý trạng thái phòng và lịch đặt cho OASIS Homestay.</p>

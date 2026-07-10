@@ -6,10 +6,10 @@ include "includes/header.php";
 <section class="hero">
     <div class="hero-content">
         <p class="eyebrowlight">OASIS Homestay</p>
-        <h1>Một chỗ nghỉ nép mình bên biển, gió mát và rất đúng chất đảo</h1>
+        <h1>Nép mình bên biển xanh, mang trọn vẻ đẹp nghỉ dưỡng miền đảo</h1>
         <p>
-            OASIS Homestay mang tinh thần nghỉ dưỡng gần biển, nhẹ nhàng và thoáng đãng.
-            Không gian sạch sẽ, riêng tư, phù hợp cho khách muốn rời phố một nhịp để nghe sóng và thở chậm lại.
+            OASIS Homestay là chốn nghỉ yên bình với không gian thoáng đãng và riêng tư, 
+            nơi bạn có thể thả lỏng giữa gió biển và nhịp sống chậm rãi.
         </p>
         <a class="button" href="rooms.php">Xem phòng trống</a>
     </div>
@@ -20,22 +20,40 @@ include "includes/header.php";
         <h2>Tìm phòng nhanh</h2>
         <form method="get" action="rooms.php">
             <div class="form-row">
-                <label>
-                    Ngày nhận phòng
-                    <input type="date" name="ngay_nhan_phong">
-                </label>
+                <div class="search-left">
+                    <div class="search-left-row">
+                        <label for="home_ngay_nhan_phong">
+                            Ngày nhận phòng
+                            <input id="home_ngay_nhan_phong" type="date" name="ngay_nhan_phong">
+                        </label>
 
-                <label>
-                    Ngày trả phòng
-                    <input type="date" name="ngay_tra_phong">
-                </label>
+                        <label for="home_gio_nhan_phong">
+                            Giờ nhận phòng
+                            <input id="home_gio_nhan_phong" type="time" name="gio_nhan_phong" value="14:00">
+                        </label>
+                    </div>
 
-                <label>
-                    Số khách
-                    <input type="number" name="so_khach" min="1" value="2">
-                </label>
+                    <div class="search-left-row">
+                        <label for="home_ngay_tra_phong">
+                            Ngày trả phòng
+                            <input id="home_ngay_tra_phong" type="date" name="ngay_tra_phong">
+                        </label>
 
-                <button type="submit">Kiểm tra phòng</button>
+                        <label for="home_gio_tra_phong">
+                            Giờ trả phòng
+                            <input id="home_gio_tra_phong" type="time" name="gio_tra_phong" value="12:00">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="search-right">
+                    <label for="home_so_khach">
+                        Số khách
+                        <input id="home_so_khach" class="search-right-label" type="number" name="so_khach" min="1" value="2">
+                    </label>
+                    <div class="search-right-placeholder" aria-hidden="true"></div>
+                    <button type="submit" class="big-search-button">Tìm phòng</button>
+                </div>
             </div>
         </form>
     </section>
@@ -43,10 +61,11 @@ include "includes/header.php";
     <section class="section home-intro">
         <div>
             <p class="eyebrow">Không gian nghỉ dưỡng</p>
-            <h2>Ấm cúng, thoáng gió và đủ tiện nghi cho một chuyến đi ra đảo thật nhẹ đầu</h2>
+            <h2>Thư giãn giữa thiên nhiên, tận hưởng trọn vẹn vẻ đẹp Hòn Sơn</h2>
             <p>
-                Homestay được thiết kế theo cảm hứng biển đảo, nhiều ánh sáng tự nhiên và
-                gam màu dịu mắt để khách vừa nghỉ ngơi vừa cảm nhận được chất Hòn Sơn rất riêng.
+                Được lấy cảm hứng từ biển đảo, không gian ngập tràn ánh sáng tự nhiên, 
+                thoáng đãng và đầy đủ tiện nghi. Mỗi góc nhỏ đều được chăm chút để mang đến 
+                cho bạn sự thoải mái như đang ở chính ngôi nhà của mình.
             </p>
             <div class="stats">
                 <div>
@@ -88,7 +107,7 @@ include "includes/header.php";
             </div>
             <div class="amenity-card">
                 <h3>Lịch đặt minh bạch</h3>
-                <p>Khi nhập ngày lưu trú, hệ thống chỉ hiển thị những phòng còn trống và đủ sức chứa.</p>
+                <p>Khi nhập ngày lưu trú, hệ thống chỉ hiển thị những phòng đang hoạt động và đủ sức chứa.</p>
             </div>
         </div>
     </section>

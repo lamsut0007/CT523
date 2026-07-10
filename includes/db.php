@@ -5,7 +5,7 @@ $dbHost = "localhost";
 $dbPort = 3306;
 $dbUser = "root";
 $dbPassword = "";
-$dbName = "hon_son_homestay";
+$dbName = "homestay_app";
 
 $conn = new mysqli($dbHost, $dbUser, $dbPassword, $dbName, $dbPort);
 

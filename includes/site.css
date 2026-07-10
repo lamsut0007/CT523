@@ -43,8 +43,8 @@ a {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 0;
-    gap: 16px;
+    padding: 4px 0;
+    gap: 4px;
 }
 
 .brand {
@@ -89,10 +89,10 @@ a {
 }
 
 .hero {
-    min-height: 460px;
+    min-height: 480px;
     background:
         linear-gradient(180deg, rgba(8, 38, 46, 0.28), rgba(8, 38, 46, 0.16)),
-        url("../assets/room/3.jpg");
+        url("../assets/img/main-page.png");
     background-size: cover;
     background-position: center;
     color: #ffffff;
@@ -176,13 +176,13 @@ main {
     background: rgba(255, 253, 248, 0.95);
     border: 1px solid var(--line);
     border-radius: 20px;
-    padding: 24px;
+    padding: 16px 24px 32px 24px;
     box-shadow: 0 18px 50px var(--glow);
     backdrop-filter: blur(10px);
 }
 
 .search-box-normal {
-    margin-top: 24px;
+    margin: 16px 0px 8px 0px;
 }
 
 .page-heading {
@@ -199,9 +199,50 @@ main {
 
 .form-row {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
     gap: 16px;
-    align-items: end;
+    align-items: start;
+}
+
+.search-left {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.search-left-row {
+    display: flex;
+    gap: 12px;
+}
+
+.search-left-row label {
+    flex: 1 1 0;
+}
+
+.search-right {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 0;
+}
+
+.search-right-placeholder {
+    height: 28px;
+}
+
+.search-right-label {
+    width: 100%;
+}
+
+.big-search-button {
+    width: 100%;
+    margin-top: -10px;
+    padding: 11px 12px;
+    font-size: 16px;
+    min-height: 54px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 label {
@@ -209,14 +250,24 @@ label {
     font-weight: 700;
 }
 
+label>input {
+    display: block;
+    margin-top: 6px;
+}
+
 input {
     width: 100%;
-    margin-top: 6px;
+    margin-top: 0;
     padding: 11px 12px;
     border: 1px solid #c9c0af;
     border-radius: 12px;
     font: inherit;
     background: #fff;
+}
+
+input::placeholder {
+    color: #8b8b8b;
+    opacity: 1;
 }
 
 input:focus {
@@ -234,7 +285,7 @@ input:focus {
 }
 
 .section-title {
-    max-width: 640px;
+    max-width: 800px;
 }
 
 .section-note,
@@ -443,6 +494,14 @@ input:focus {
     .home-intro,
     .amenity-grid {
         grid-template-columns: 1fr;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .search-right-placeholder {
+        display: none;
     }
 
     .stats {
