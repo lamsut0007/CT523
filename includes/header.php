@@ -16,8 +16,7 @@
             <nav class="menu">
                 <a href="index.php">Trang chủ</a>
                 <a href="rooms.php">Phòng</a>
-                <a href="#">Đặt lịch</a>
-                <a href="#">Liên hệ</a>
+                <a href="#">Đánh giá</a>
             </nav>
         </div>
     </header>

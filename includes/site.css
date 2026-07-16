@@ -542,3 +542,469 @@ input:focus {
         height: 36px;
     }
 }
+
+/* ─── Room card  -  clickable ─────────────────────────────────────────────── */
+.room-card-clickable {
+    cursor: pointer;
+    transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+
+.room-card-clickable:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 22px 50px rgba(15, 78, 93, 0.18);
+}
+
+.room-card-clickable:hover .room-card-hover-overlay {
+    opacity: 1;
+}
+
+/* Hover overlay on card image */
+.room-card-hover-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 30%, rgba(12, 55, 66, 0.78));
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 14px;
+    opacity: 0;
+    transition: opacity 0.22s ease;
+    border-radius: 0;
+    pointer-events: none;
+}
+
+.room-card-hover-label {
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    background: rgba(28, 107, 122, 0.7);
+    padding: 5px 12px;
+    border-radius: 999px;
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+/* Active card highlight */
+.room-card-active {
+    outline: 2.5px solid var(--sea);
+    outline-offset: 2px;
+}
+
+/* ─── Fixed overlay modal ───────────────────────────────────────────────── */
+.room-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    background: rgba(8, 22, 28, 0.68);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.room-modal-overlay[hidden] {
+    display: none;
+}
+
+.modal-open {
+    overflow: hidden;
+}
+
+.room-modal-box {
+    position: relative;
+    width: min(1060px, 96%);
+    max-height: min(90vh, 90dvh);
+    overflow: hidden;
+    /* box clips — does NOT scroll */
+    background: var(--paper);
+    border-radius: 22px;
+    box-shadow: 0 32px 80px rgba(8, 22, 28, 0.38);
+    display: grid;
+    grid-template-columns: 460px 1fr;
+    grid-template-rows: 1fr;
+    /* single row fills the max-height */
+    animation: modal-slide-up 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes modal-slide-up {
+    from {
+        opacity: 0;
+        transform: translateY(22px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* ─── Close button ──────────────────────────────────────────────────────── */
+.room-modal-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 10;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(255, 253, 248, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    color: var(--ink);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+    transition: background 0.15s, transform 0.15s;
+}
+
+.room-modal-close:hover {
+    background: #fff;
+    transform: scale(1.08);
+    filter: none;
+}
+
+/* ─── Modal image column ────────────────────────────────────────────────── */
+.room-modal-image-wrap {
+    position: relative;
+    border-radius: 22px 0 0 22px;
+    overflow: hidden;
+    align-self: stretch;
+    /* fill full grid row height */
+    min-height: 280px;
+}
+
+.room-modal-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.room-modal-badge {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: rgba(15, 78, 93, 0.82);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    backdrop-filter: blur(4px);
+}
+
+/* ─── Modal body column ─────────────────────────────────────────────────── */
+.room-modal-body {
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    overflow-y: auto;
+    /* only THIS column scrolls if needed */
+    min-height: 0;
+    /* critical: lets grid child honour parent max-height */
+    scrollbar-width: thin;
+    scrollbar-color: var(--line) transparent;
+}
+
+.room-modal-title {
+    margin: 4px 0 10px;
+    font-size: clamp(20px, 2.5vw, 26px);
+    line-height: 1.2;
+    color: var(--ink);
+}
+
+.room-modal-desc {
+    margin: 0 0 12px;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.room-modal-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 0;
+    font-size: 13px;
+    color: var(--ink);
+    margin-bottom: 4px;
+}
+
+.room-modal-divider {
+    border: none;
+    border-top: 1px solid var(--line);
+    margin: 14px 0;
+}
+
+/* ─── Calculator section ────────────────────────────────────────────────── */
+.room-modal-calc-title {
+    margin: 0 0 14px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--sea-deep);
+}
+
+.room-modal-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.room-modal-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 8px;
+}
+
+/* Stepper */
+.room-modal-stepper {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    height: 42px;
+}
+
+.stepper-btn {
+    background: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    width: 36px;
+    height: 42px;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--sea-deep);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 0;
+    transition: background 0.15s;
+}
+
+.stepper-btn:hover {
+    background: rgba(28, 107, 122, 0.08);
+    filter: none;
+}
+
+.stepper-input {
+    flex: 1;
+    border: none;
+    border-left: 1px solid var(--line);
+    border-right: 1px solid var(--line);
+    border-radius: 0;
+    text-align: center;
+    font-weight: 700;
+    font-size: 15px;
+    padding: 0;
+    min-width: 0;
+    height: 42px;
+    -moz-appearance: textfield;
+}
+
+.stepper-input::-webkit-outer-spin-button,
+.stepper-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+/* Type toggle */
+.room-modal-type-toggle {
+    display: flex;
+    gap: 6px;
+}
+
+.type-btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    height: 42px;
+    padding: 0 8px;
+    border-radius: 10px;
+    border: 1.5px solid var(--line);
+    background: #fff;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: none;
+    transition: all 0.18s ease;
+    text-align: center;
+}
+
+.type-btn:hover {
+    border-color: var(--sea);
+    color: var(--sea);
+    filter: none;
+}
+
+.type-btn-active {
+    background: linear-gradient(135deg, var(--sea), var(--sea-deep));
+    border-color: transparent;
+    color: #fff;
+}
+
+.type-btn-active:hover {
+    color: #fff;
+    filter: brightness(1.05);
+}
+
+/* Total price */
+.room-modal-total-wrap {
+    background: linear-gradient(135deg, rgba(28, 107, 122, 0.08), rgba(255, 228, 187, 0.35));
+    border: 1px solid rgba(28, 107, 122, 0.2);
+    border-radius: 16px;
+    padding: 16px 20px;
+}
+
+.room-modal-total-label {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 4px;
+}
+
+.room-modal-total-price {
+    font-size: clamp(22px, 3vw, 30px);
+    font-weight: 700;
+    color: var(--sea-deep);
+    line-height: 1.2;
+}
+
+.room-modal-total-note {
+    margin: 8px 0 0;
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+/* ─── Contact section ───────────────────────────────────────────────────── */
+.room-modal-contact-title {
+    margin: 0 0 12px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+}
+
+.room-modal-contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.room-modal-contact-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: #fff;
+    border: 1.5px solid var(--line);
+    color: var(--ink);
+    text-decoration: none;
+    transition: all 0.18s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.room-modal-contact-btn:hover {
+    border-color: var(--sea);
+    box-shadow: 0 6px 18px rgba(28, 107, 122, 0.14);
+    transform: translateY(-2px);
+}
+
+.contact-icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(28, 107, 122, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.contact-icon svg {
+    width: 22px;
+    height: 22px;
+}
+
+.room-modal-contact-btn strong {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    font-weight: 700;
+}
+
+.contact-sub {
+    display: block;
+    font-size: 16px;
+    color: var(--sea-deep);
+    font-weight: 700;
+    margin-top: 2px;
+}
+
+/* ─── Modal responsive ──────────────────────────────────────────────────── */
+
+/* Mobile: stack dọc, ảnh nhỏ lại, nội dung scroll bên trong */
+@media (max-width: 700px) {
+    .room-modal-overlay {
+        padding: 10px;
+        align-items: flex-end;
+    }
+
+    .room-modal-box {
+        width: 100%;
+        grid-template-columns: 1fr;
+        grid-template-rows: 180px 1fr;
+        /* ảnh cố định 180px, body còn lại */
+        max-height: min(92vh, 92dvh);
+        border-radius: 22px 22px 0 0;
+    }
+
+    .room-modal-image-wrap {
+        border-radius: 22px 22px 0 0;
+        min-height: 0;
+        align-self: auto;
+    }
+
+    .room-modal-img {
+        height: 180px;
+    }
+
+    .room-modal-body {
+        padding: 16px 16px 14px;
+    }
+
+    .room-modal-options {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .room-modal-contact-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .contact-sub {
+        font-size: 14px;
+    }
+}
