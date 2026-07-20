@@ -3,6 +3,22 @@ $pageTitle = "Danh sách phòng - OASIS Homestay";
 include "includes/db.php";
 include "includes/functions.php";
 
+// ── JSON: lịch đặt phòng (thay thế file api/ riêng) ─────────────────────────
+if (isset($_GET['action']) && $_GET['action'] === 'calendar') {
+    header('Content-Type: application/json; charset=utf-8');
+    header('Cache-Control: no-store');
+    $idPhong = isset($_GET['id']) ? (int) $_GET['id'] : 0;
+    $soThang = isset($_GET['months']) ? (int) $_GET['months'] : 3;
+    $lich = lay_lich_dat_phong($conn, $idPhong, $soThang);
+    if ($lich === null) {
+        echo json_encode(['ok' => false, 'error' => 'Thiếu tham số hoặc lỗi DB']);
+    } else {
+        echo json_encode(['ok' => true, 'dat' => $lich, 'months' => $soThang]);
+    }
+    exit;
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 $ngayNhanPhong = isset($_GET["ngay_nhan_phong"]) ? trim($_GET["ngay_nhan_phong"]) : "";
 $ngayTraPhong = isset($_GET["ngay_tra_phong"]) ? trim($_GET["ngay_tra_phong"]) : "";
 $gioNhanPhong = isset($_GET["gio_nhan_phong"]) ? trim($_GET["gio_nhan_phong"]) : "14:00";
@@ -175,6 +191,23 @@ include "includes/header.php";
 
             <hr class="room-modal-divider">
 
+            <!-- AVAILABILITY CALENDAR -->
+            <div class="room-modal-calendar-section">
+                <h3 class="room-modal-calc-title">Lịch tình trạng phòng</h3>
+                <div class="room-cal-legend">
+                    <span class="room-cal-legend-item room-cal-legend-avail">Còn trống</span>
+                    <span class="room-cal-legend-item room-cal-legend-booked">Đã đặt (cả ngày)</span>
+                    <span class="room-cal-legend-item room-cal-legend-booked-gio">Đã đặt (theo giờ)</span>
+                    <span class="room-cal-legend-item room-cal-legend-pending">Chờ xác nhận</span>
+                    <span class="room-cal-legend-item room-cal-legend-today">Hôm nay</span>
+                </div>
+                <div id="modal-calendar" class="room-cal-wrap">
+                    <div class="room-cal-loading">Đang tải lịch…</div>
+                </div>
+            </div>
+
+            <hr class="room-modal-divider">
+
             <!-- BOOKING CALCULATOR -->
             <div class="room-modal-calc">
                 <h3 class="room-modal-calc-title">Tính chi phí lưu trú</h3>
@@ -249,7 +282,7 @@ include "includes/header.php";
     var state = {
         giaGio: 0,
         giaNgay: 0,
-        loaiThue: 'dem',   // 'dem' | 'gio'
+        loaiThue: 'dem',
         soKhach: 2,
         soLuong: 1,
         sucChua: 2
@@ -269,6 +302,7 @@ include "includes/header.php";
     var labelLuong = document.getElementById('label-so-luong');
     var btnDem     = document.getElementById('btn-theo-dem');
     var btnGio     = document.getElementById('btn-theo-gio');
+    var calWrap    = document.getElementById('modal-calendar');
     var activeCard = null;
 
     // ── Calculate & render total ──────────────────────────────────────────────
@@ -316,12 +350,151 @@ include "includes/header.php";
     btnDem.addEventListener('click', function () { setLoai('dem'); });
     btnGio.addEventListener('click', function () { setLoai('gio'); });
 
+    // ── Calendar helpers ──────────────────────────────────────────────────────
+    var THANG_VI = ['Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6',
+                    'Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'];
+    var THU_VI   = ['CN','T2','T3','T4','T5','T6','T7'];
+
+    /** Build booked map: key='YYYY-MM-DD' -> array of {tu, den, kieu, trang_thai} */
+    function buildBookedMap(datList) {
+        var bookedMap  = {};
+        var pendingMap = {};
+
+        datList.forEach(function (d) {
+            var start = new Date(d.tu.replace(' ', 'T'));
+            var end   = new Date(d.den.replace(' ', 'T'));
+
+            // For hourly bookings (same day) just mark that one day
+            var cur = new Date(start);
+            cur.setHours(0, 0, 0, 0);
+            var loopEnd = new Date(end);
+            loopEnd.setHours(0, 0, 0, 0);
+            // If same-day (hourly), loopEnd === cur so we add 1 day to mark it
+            if (loopEnd <= cur) loopEnd.setDate(loopEnd.getDate() + 1);
+
+            // Format helpers
+            function fmtTime(dt) {
+                return String(dt.getHours()).padStart(2,'0') + ':' + String(dt.getMinutes()).padStart(2,'0');
+            }
+            function fmtDate(dt) {
+                return String(dt.getDate()).padStart(2,'0') + '/' + String(dt.getMonth()+1).padStart(2,'0');
+            }
+            var isGio = d.kieu === 'gio';
+            // Theo giờ → hiện giờ cụ thể; theo ngày → hiện khoảng ngày
+            var timeLabel = isGio
+                ? (fmtTime(start) + ' \u2013 ' + fmtTime(end))
+                : (fmtDate(start) + ' \u2013 ' + fmtDate(end));
+
+
+            while (cur < loopEnd) {
+                var key = cur.toISOString().slice(0, 10);
+                var info = { time: timeLabel, gio: isGio };
+                if (d.trang_thai === 'cho_xac_nhan') {
+                    if (!pendingMap[key]) pendingMap[key] = [];
+                    pendingMap[key].push(info);
+                } else {
+                    if (!bookedMap[key]) bookedMap[key] = [];
+                    bookedMap[key].push(info);
+                }
+                cur.setDate(cur.getDate() + 1);
+            }
+        });
+        return { booked: bookedMap, pending: pendingMap };
+    }
+
+    /** Render 3 months of calendar starting from today. */
+    function renderCalendar(datList) {
+        var map    = buildBookedMap(datList);
+        var today  = new Date();
+        today.setHours(0, 0, 0, 0);
+        var todayKey = today.toISOString().slice(0, 10);
+
+        var html = '';
+        var MONTHS = 3;
+        for (var m = 0; m < MONTHS; m++) {
+            var ref = new Date(today.getFullYear(), today.getMonth() + m, 1);
+            var year = ref.getFullYear();
+            var month = ref.getMonth();
+            var daysInMonth = new Date(year, month + 1, 0).getDate();
+            var firstDow = new Date(year, month, 1).getDay();
+
+            html += '<div class="room-cal-month">';
+            html += '<div class="room-cal-month-title">' + THANG_VI[month] + ' ' + year + '</div>';
+            html += '<div class="room-cal-grid">';
+
+            THU_VI.forEach(function (t) {
+                html += '<div class="room-cal-dow">' + t + '</div>';
+            });
+
+            for (var e = 0; e < firstDow; e++) {
+                html += '<div class="room-cal-day room-cal-empty"></div>';
+            }
+
+            for (var d = 1; d <= daysInMonth; d++) {
+                var dateKey = year + '-' +
+                    String(month + 1).padStart(2, '0') + '-' +
+                    String(d).padStart(2, '0');
+                var cls = 'room-cal-day';
+                var tip = '';
+                var inner = String(d);
+
+                if (dateKey === todayKey) {
+                    cls += ' room-cal-today';
+                    tip = 'Hôm nay';
+                } else if (map.booked[dateKey]) {
+                    var infos = map.booked[dateKey];
+                    var allGio = infos.every(function(x){ return x.gio; });
+                    cls += allGio ? ' room-cal-booked-gio' : ' room-cal-booked';
+                    tip = allGio
+                        ? infos.map(function(x){ return 'Đã đặt theo giờ: ' + x.time; }).join(' | ')
+                        : 'Đã đặt';
+                    if (allGio) inner += '<span class="cal-dot cal-dot-booked"></span>';
+                } else if (map.pending[dateKey]) {
+                    var pinfos = map.pending[dateKey];
+                    var pallGio = pinfos.every(function(x){ return x.gio; });
+                    cls += pallGio ? ' room-cal-pending-gio' : ' room-cal-pending';
+                    tip = pallGio
+                        ? pinfos.map(function(x){ return 'Chờ xác nhận theo giờ: ' + x.time; }).join(' | ')
+                        : 'Chờ xác nhận';
+                    if (pallGio) inner += '<span class="cal-dot cal-dot-pending"></span>';
+                } else if (new Date(dateKey) < today) {
+                    cls += ' room-cal-past';
+                } else {
+                    cls += ' room-cal-avail';
+                    tip = 'Còn trống';
+                }
+                var tipAttr = tip ? ' title="' + tip + '"' : '';
+                html += '<div class="' + cls + '"' + tipAttr + '>' + inner + '</div>';
+            }
+
+            html += '</div></div>';
+        }
+        calWrap.innerHTML = html;
+    }
+
+    function loadCalendar(idPhong) {
+        calWrap.innerHTML = '<div class="room-cal-loading">Đang tải lịch…</div>';
+        fetch('rooms.php?action=calendar&id=' + idPhong + '&months=3')
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (data.ok) {
+                    renderCalendar(data.dat);
+                } else {
+                    calWrap.innerHTML = '<p class="room-cal-err">Không tải được lịch.</p>';
+                }
+            })
+            .catch(function () {
+                calWrap.innerHTML = '<p class="room-cal-err">Lỗi kết nối.</p>';
+            });
+    }
+
     // ── Open modal ────────────────────────────────────────────────────────────
     function openModal(card) {
         if (activeCard) activeCard.classList.remove('room-card-active');
         activeCard = card;
         card.classList.add('room-card-active');
 
+        var id      = card.dataset.id;
         var ma      = card.dataset.ma;
         var ten     = card.dataset.ten;
         var loai    = card.dataset.loai;
@@ -346,6 +519,9 @@ include "includes/header.php";
                                 '  &nbsp; &nbsp;  Giá một giờ: <strong>&nbsp; ' + fmtMoney(giaGio) + '</strong>';
         inputLuong.value = 1;
         setLoai('dem');
+
+        // Load calendar for this room
+        loadCalendar(id);
 
         overlay.hidden = false;
         document.body.classList.add('modal-open');

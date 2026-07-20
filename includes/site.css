@@ -618,7 +618,7 @@ input:focus {
     width: min(1060px, 96%);
     max-height: min(90vh, 90dvh);
     overflow: hidden;
-    /* box clips — does NOT scroll */
+    /* box clips - does NOT scroll */
     background: var(--paper);
     border-radius: 22px;
     box-shadow: 0 32px 80px rgba(8, 22, 28, 0.38);
@@ -1010,7 +1010,7 @@ input:focus {
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
-   TRANG ĐÁNH GIÁ — feedback.php
+   TRANG ĐÁNH GIÁ - feedback.php
    ══════════════════════════════════════════════════════════════════════════ */
 
 /* ─── Hero ─────────────────────────────────────────────────────────────── */
@@ -1609,5 +1609,228 @@ input:focus {
 
     .rv-hero-inner {
         padding: 40px 0 60px;
+    }
+}
+
+/* ══════════════════════════════════════════════════════
+   AVAILABILITY CALENDAR (inside room detail modal)
+══════════════════════════════════════════════════════ */
+.room-modal-calendar-section {
+    margin: 0;
+}
+
+/* Legend row */
+.room-cal-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    margin-bottom: 16px;
+}
+
+.room-cal-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.76rem;
+    font-weight: 500;
+    color: var(--muted);
+}
+
+.room-cal-legend-item::before {
+    content: '';
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+
+.room-cal-legend-avail::before {
+    background: #d4f0e8;
+    border: 1px solid #5ab99b;
+}
+
+.room-cal-legend-booked::before {
+    background: #ffe0e0;
+    border: 1px solid #e07070;
+}
+
+.room-cal-legend-booked-gio::before {
+    background: repeating-linear-gradient(135deg, #ffe0e0 0px, #ffe0e0 3px, #fff5f5 3px, #fff5f5 6px);
+    border: 1px solid #f0a0a0;
+}
+
+.room-cal-legend-pending::before {
+    background: #fff3cc;
+    border: 1px solid #e0b030;
+}
+
+.room-cal-legend-today::before {
+    background: var(--sea);
+}
+
+/* Calendar wrapper – horizontal scroll on small screens */
+.room-cal-wrap {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--line) transparent;
+}
+
+.room-cal-loading,
+.room-cal-err {
+    font-size: 0.85rem;
+    color: var(--muted);
+    padding: 8px 0;
+}
+
+/* Individual month block */
+.room-cal-month {
+    flex: 0 0 auto;
+    min-width: 210px;
+}
+
+.room-cal-month-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--sea-deep);
+    text-align: center;
+    margin-bottom: 8px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+/* 7-column grid for the calendar */
+.room-cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+}
+
+/* Day-of-week header cells */
+.room-cal-dow {
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-align: center;
+    color: var(--muted);
+    padding: 2px 0 4px;
+    text-transform: uppercase;
+}
+
+/* Individual day cells */
+.room-cal-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-radius: 5px;
+    cursor: default;
+    transition: transform 0.12s;
+    line-height: 1;
+}
+
+.room-cal-empty {
+    background: transparent;
+}
+
+/* Available */
+.room-cal-avail {
+    background: #d4f0e8;
+    color: #1e6b52;
+    border: 1px solid #a8dac8;
+}
+
+.room-cal-avail:hover {
+    transform: scale(1.15);
+    background: #b8e8d4;
+}
+
+/* Booked (confirmed) */
+.room-cal-booked {
+    background: #ffe0e0;
+    color: #9c2b2b;
+    border: 1px solid #f0a0a0;
+    text-decoration: line-through;
+    opacity: 0.85;
+}
+
+/* Pending confirmation */
+.room-cal-pending {
+    background: #fff3cc;
+    color: #7a5800;
+    border: 1px solid #e0c060;
+}
+
+/* Today */
+.room-cal-today {
+    background: var(--sea);
+    color: #fff;
+    font-weight: 700;
+    border: 2px solid var(--sea-deep);
+}
+
+/* Past days */
+.room-cal-past {
+    background: transparent;
+    color: #c5cdd0;
+    font-size: 0.7rem;
+}
+
+/* Hourly booked – striped pattern to distinguish from full-day */
+.room-cal-booked-gio {
+    background: repeating-linear-gradient(135deg,
+            #ffe0e0 0px, #ffe0e0 3px,
+            #fff5f5 3px, #fff5f5 6px);
+    color: #9c2b2b;
+    border: 1px solid #f0a0a0;
+    position: relative;
+}
+
+/* Hourly pending – striped yellow */
+.room-cal-pending-gio {
+    background: repeating-linear-gradient(135deg,
+            #fff3cc 0px, #fff3cc 3px,
+            #fffae8 3px, #fffae8 6px);
+    color: #7a5800;
+    border: 1px solid #e0c060;
+    position: relative;
+}
+
+/* Small dot indicator shown on hourly-only days */
+.cal-dot {
+    display: block;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.room-cal-booked-gio,
+.room-cal-pending-gio {
+    position: relative;
+}
+
+.cal-dot-booked {
+    background: #c0392b;
+}
+
+.cal-dot-pending {
+    background: #b8860b;
+}
+
+@media (max-width: 540px) {
+    .room-cal-month {
+        min-width: 190px;
+    }
+
+    .room-cal-day {
+        font-size: 0.68rem;
     }
 }

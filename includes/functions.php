@@ -151,3 +151,44 @@ function ten_trang_thai_phong($trangThai)
 
     return "Chưa rõ";
 }
+
+function lay_lich_dat_phong($conn, $idPhong, $soThang = 3)
+{
+    if ($conn === null || $idPhong <= 0) {
+        return null;
+    }
+
+    $soThang = max(1, min(6, (int) $soThang));
+    $tuNgay  = date('Y-m-d H:i:s');
+    $denNgay = date('Y-m-d H:i:s', strtotime("+{$soThang} months"));
+
+    $sql = "SELECT ngay_nhan_phong, ngay_tra_phong, kieu_dat, trang_thai
+            FROM dat_phong
+            WHERE id_phong = ?
+              AND trang_thai IN ('cho_xac_nhan', 'da_xac_nhan')
+              AND ngay_tra_phong  > ?
+              AND ngay_nhan_phong < ?
+            ORDER BY ngay_nhan_phong ASC";
+
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) {
+        return null;
+    }
+
+    $stmt->bind_param('iss', $idPhong, $tuNgay, $denNgay);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $danhSach = [];
+    while ($row = $result->fetch_assoc()) {
+        $danhSach[] = [
+            'tu'         => $row['ngay_nhan_phong'],
+            'den'        => $row['ngay_tra_phong'],
+            'kieu'       => $row['kieu_dat'],
+            'trang_thai' => $row['trang_thai'],
+        ];
+    }
+
+    $stmt->close();
+    return $danhSach;
+}

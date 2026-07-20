@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "Đánh giá — OASIS Homestay";
+$pageTitle = "Đánh giá - OASIS Homestay";
 include "includes/db.php";
 
 /* ─── Xử lý gửi đánh giá ────────────────────────────────────────────── */
