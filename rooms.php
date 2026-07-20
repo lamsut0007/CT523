@@ -30,15 +30,19 @@ $danhSachPhong = lay_phong_dang_hoat_dong($conn, $ngayNhanPhong, $ngayTraPhong, 
 include "includes/header.php";
 ?>
 
-<main>
-    <section class="page-heading">
-        <p class="eyebrow">Danh sách phòng</p>
+<!-- ─── Hero uốn lượn ────────────────────────────────────────────────── -->
+<section class="rv-hero">
+    <div class="rv-hero-inner">
+        <p class="eyebrowlight">OASIS Homestay</p>
         <h1>Chọn một căn phòng vừa ngắm biển, vừa nghỉ cho đúng mood Hòn Sơn</h1>
-        <p>
-            Nhập ngày ở và số khách, tụi mình sẽ lọc ra những phòng còn trống trong đúng khung thời gian đó.<br>
-            Không nhập ngày thì trang chỉ hiển thị các phòng theo sức chứa.
+        <p class="rv-hero-sub">
+            Nhập ngày ở và số khách, tụi mình sẽ lọc ra những phòng còn trống trong đúng khung thời gian đó.
         </p>
-    </section>
+    </div>
+    <div class="rv-wave" aria-hidden="true"></div>
+</section>
+
+<main>
 
     <section class="search-box search-box-normal">
         <h2>Tìm phòng còn trống</h2>

@@ -16,7 +16,7 @@
             <nav class="menu">
                 <a href="index.php">Trang chủ</a>
                 <a href="rooms.php">Phòng</a>
-                <a href="#">Đánh giá</a>
+                <a href="feedback.php">Đánh giá</a>
             </nav>
         </div>
     </header>
