@@ -4,6 +4,49 @@ function h($giaTri)
     return htmlspecialchars($giaTri, ENT_QUOTES, "UTF-8");
 }
 
+function asset_url($duongDan)
+{
+    $duongDan = trim($duongDan);
+    if ($duongDan === "") {
+        return "";
+    }
+
+    if (preg_match('#^(https?:)?//#', $duongDan) || strpos($duongDan, 'data:') === 0) {
+        return $duongDan;
+    }
+
+    $baseDir = isset($_SERVER['SCRIPT_FILENAME']) && $_SERVER['SCRIPT_FILENAME'] !== ""
+        ? dirname($_SERVER['SCRIPT_FILENAME'])
+        : dirname(__DIR__);
+
+    $duongDanFile = $duongDan;
+    $viTriChamHoi = strpos($duongDan, '?');
+    if ($viTriChamHoi !== false) {
+        $duongDanFile = substr($duongDan, 0, $viTriChamHoi);
+    }
+
+    $duongDanFile = str_replace('\\', '/', $duongDanFile);
+    $duongDanThucTe = $duongDanFile;
+    if ($duongDanFile !== "" && $duongDanFile[0] !== '/' && !preg_match('#^[A-Za-z]:/#', $duongDanFile)) {
+        $duongDanThucTe = $baseDir . '/' . $duongDanFile;
+    }
+
+    $duongDanThucTe = str_replace('//', '/', $duongDanThucTe);
+    $duongDanThucTe = realpath($duongDanThucTe);
+
+    if ($duongDanThucTe === false || !is_file($duongDanThucTe)) {
+        return $duongDan;
+    }
+
+    $timestamp = filemtime($duongDanThucTe);
+    if ($timestamp === false) {
+        return $duongDan;
+    }
+
+    $separator = (strpos($duongDan, '?') === false) ? '?' : '&';
+    return $duongDan . $separator . 'v=' . $timestamp;
+}
+
 function tien_viet_nam($soTien)
 {
     return number_format((float) $soTien, 0, ",", ".") . " đồng";

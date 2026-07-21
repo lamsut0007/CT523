@@ -24,7 +24,7 @@ include "includes/header.php";
                     <div class="search-left-row">
                         <label for="home_ngay_nhan_phong">
                             Ngày nhận phòng
-                            <input id="home_ngay_nhan_phong" type="date" name="ngay_nhan_phong">
+                            <input id="home_ngay_nhan_phong" type="date" name="ngay_nhan_phong" min="<?php echo date('Y-m-d'); ?>">
                         </label>
 
                         <label for="home_gio_nhan_phong">
@@ -36,7 +36,7 @@ include "includes/header.php";
                     <div class="search-left-row">
                         <label for="home_ngay_tra_phong">
                             Ngày trả phòng
-                            <input id="home_ngay_tra_phong" type="date" name="ngay_tra_phong">
+                            <input id="home_ngay_tra_phong" type="date" name="ngay_tra_phong" min="<?php echo date('Y-m-d'); ?>">
                         </label>
 
                         <label for="home_gio_tra_phong">
@@ -84,9 +84,9 @@ include "includes/header.php";
         </div>
 
         <div class="image-grid">
-            <img class="image-large" src="assets/room/1.jpg" alt="Không gian phòng homestay">
-            <img src="assets/room/2.jpg" alt="Phòng nghỉ sáng sủa">
-            <img src="assets/room/5.jpg" alt="Phòng gia đình tại homestay">
+            <img class="image-large" src="<?php echo h(asset_url('assets/room/1.jpg')); ?>" alt="Không gian phòng homestay">
+            <img src="<?php echo h(asset_url('assets/room/2.jpg')); ?>" alt="Phòng nghỉ sáng sủa">
+            <img src="<?php echo h(asset_url('assets/room/5.jpg')); ?>" alt="Phòng gia đình tại homestay">
         </div>
     </section>
 

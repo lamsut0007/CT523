@@ -32,14 +32,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo h($pageTitle); ?></title>
-    <link rel="icon" href="../assets/logo/oasis-logo-short.png" type="image/png">
-    <link rel="stylesheet" href="includes/admin.css">
+    <link rel="icon" href="<?php echo h(asset_url('../assets/logo/oasis-logo-short.png')); ?>" type="image/png">
+    <link rel="stylesheet" href="<?php echo h(asset_url('includes/admin.css')); ?>">
 </head>
 <body>
     <main class="login-page">
         <section class="login-card">
             <a class="login-brand" href="../index.php" aria-label="OASIS Homestay">
-                <img class="login-brand-mark" src="../assets/logo/oasis-logo.png" alt="OASIS Homestay">
+                <img class="login-brand-mark" src="<?php echo h(asset_url('../assets/logo/oasis-logo.png')); ?>" alt="OASIS Homestay">
             </a>
             <h1>Đăng nhập Admin</h1>
             <p>Quản lý trạng thái phòng và lịch đặt cho OASIS Homestay.</p>

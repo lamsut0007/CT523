@@ -68,7 +68,7 @@ include "includes/header.php";
                     <div class="search-left-row">
                         <label for="ngay_nhan_phong">
                             Ngày nhận phòng
-                            <input id="ngay_nhan_phong" type="date" name="ngay_nhan_phong" value="<?php echo h($ngayNhanPhong); ?>">
+                            <input id="ngay_nhan_phong" type="date" name="ngay_nhan_phong" min="<?php echo date('Y-m-d'); ?>" value="<?php echo h($ngayNhanPhong); ?>">
                         </label>
 
                         <label for="gio_nhan_phong">
@@ -80,7 +80,7 @@ include "includes/header.php";
                     <div class="search-left-row">
                         <label for="ngay_tra_phong">
                             Ngày trả phòng
-                            <input id="ngay_tra_phong" type="date" name="ngay_tra_phong" value="<?php echo h($ngayTraPhong); ?>">
+                            <input id="ngay_tra_phong" type="date" name="ngay_tra_phong" min="<?php echo date('Y-m-d'); ?>" value="<?php echo h($ngayTraPhong); ?>">
                         </label>
 
                         <label for="gio_tra_phong">
