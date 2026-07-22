@@ -138,12 +138,12 @@ include "includes/header.php";
                         data-suc-chua="<?php echo (int)$phong["suc_chua"]; ?>"
                         data-gia-ngay="<?php echo (float)$phong["gia_theo_ngay"]; ?>"
                         data-gia-gio="<?php echo (float)$phong["gia_theo_gio"]; ?>"
-                        data-hinh="<?php echo h($phong["duong_dan_hinh"]); ?>"
+                        data-hinh="<?php echo h(asset_url($phong["duong_dan_hinh"])); ?>"
                         role="button"
                         tabindex="0"
                         aria-label="Xem chi tiết phòng <?php echo h($phong["ten_phong"]); ?>">
                         <div class="room-image">
-                            <img src="<?php echo h($phong["duong_dan_hinh"]); ?>" alt="<?php echo h($phong["ten_phong"]); ?>">
+                            <img src="<?php echo h(asset_url($phong["duong_dan_hinh"])); ?>" alt="<?php echo h($phong["ten_phong"]); ?>">
                             <div class="room-card-hover-overlay" aria-hidden="true">
                                 <span class="room-card-hover-label">Xem chi tiết</span>
                             </div>

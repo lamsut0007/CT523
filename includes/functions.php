@@ -193,11 +193,11 @@ function ngay_tim_kiem_hop_le($ngayNhanPhong, $ngayTraPhong, $gioNhanPhong = "14
 function ten_trang_thai_phong($trangThai)
 {
     if ($trangThai == "dang_hoat_dong") {
-        return "Đang hoạt động";
+        return "Hoạt động";
     }
 
     if ($trangThai == "tu_sua") {
-        return "Tu sửa";
+        return "Đang tu sửa";
     }
 
     return "Chưa rõ";
@@ -216,7 +216,7 @@ function lay_lich_dat_phong($conn, $idPhong, $soThang = 3)
     $sql = "SELECT ngay_nhan_phong, ngay_tra_phong, kieu_dat, trang_thai
             FROM dat_phong
             WHERE id_phong = ?
-              AND trang_thai IN ('cho_xac_nhan', 'da_xac_nhan')
+              AND trang_thai IN ('da_xac_nhan', 'hoan_thanh')
               AND ngay_tra_phong  > ?
               AND ngay_nhan_phong < ?
             ORDER BY ngay_nhan_phong ASC";

@@ -11,7 +11,6 @@ include "includes/header.php";
             OASIS Homestay là chốn nghỉ yên bình với không gian thoáng đãng và riêng tư, 
             nơi bạn có thể thả lỏng giữa gió biển và nhịp sống chậm rãi.
         </p>
-        <a class="button" href="rooms.php">Xem phòng trống</a>
     </div>
 </section>
 

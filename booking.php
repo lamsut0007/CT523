@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             $checkStmt = $conn->prepare(
                 "SELECT 1 FROM dat_phong
                  WHERE id_phong = ?
-                   AND trang_thai IN ('cho_xac_nhan', 'da_xac_nhan')
+                   AND trang_thai IN ('da_xac_nhan', 'hoan_thanh')
                    AND ngay_nhan_phong < ?
                    AND ngay_tra_phong > ?
                  LIMIT 1"
@@ -179,7 +179,6 @@ include "includes/header.php";
             </div>
         </div>
         <div class="bk-success-actions">
-            <a href="rooms.php" class="bk-btn-outline">← Xem thêm phòng</a>
             <a href="index.php" class="bk-btn-primary">Về trang chủ</a>
         </div>
     </div>
@@ -192,7 +191,7 @@ include "includes/header.php";
     <!-- Cột trái: thông tin phòng -->
     <aside class="bk-room-card">
         <div class="bk-room-img-wrap">
-            <img src="<?php echo h($phong['duong_dan_hinh']); ?>"
+            <img src="<?php echo h(asset_url($phong['duong_dan_hinh'])); ?>"
                  alt="<?php echo h($phong['ten_phong']); ?>"
                  class="bk-room-img">
             <span class="bk-room-badge"><?php echo h($phong['ma_so_phong']); ?></span>

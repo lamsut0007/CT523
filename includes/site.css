@@ -99,6 +99,14 @@ a {
 
 .page-title {
     margin-bottom: 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.page-title>div {
+    flex: 1;
 }
 
 .page-title h1 {
@@ -112,12 +120,49 @@ a {
     color: var(--muted);
 }
 
+.page-title .button {
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
 .admin-card {
     background: rgba(255, 253, 248, 0.95);
     border: 1px solid var(--line);
     border-radius: 18px;
-    padding: 22px;
+    padding: 20px 28px 28px 28px;
     box-shadow: 0 14px 30px rgba(24, 43, 48, 0.08);
+    width: 90%;
+}
+
+.room-admin-form-card {
+    background: rgba(255, 253, 248, 0.95);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 20px 28px 28px 28px;
+    box-shadow: 0 14px 30px rgba(24, 43, 48, 0.08);
+    width: 80%;
+}
+
+.room-admin-list-card {
+    background: rgba(255, 253, 248, 0.95);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 20px 28px 28px 28px;
+    box-shadow: 0 14px 30px rgba(24, 43, 48, 0.08);
+}
+
+.room-admin-list-intro {
+    margin-bottom: 20px;
+}
+
+.room-admin-list-intro h2 {
+    margin: 0 0 6px;
+    font-size: 22px;
+}
+
+.room-admin-list-intro p {
+    margin: 0;
+    color: var(--muted);
 }
 
 .admin-dashboard {
@@ -221,11 +266,12 @@ a {
 .room-table {
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed;
 }
 
 .room-table th,
 .room-table td {
-    padding: 12px;
+    padding: 12px 14px;
     border-bottom: 1px solid var(--line);
     text-align: left;
     vertical-align: middle;
@@ -235,12 +281,57 @@ a {
     background: rgba(248, 243, 233, 0.9);
 }
 
+.room-table th:nth-child(1),
+.room-table td:nth-child(1) {
+    width: 14%;
+}
+
+.room-table th:nth-child(2),
+.room-table td:nth-child(2) {
+    width: 20%;
+}
+
+.room-table th:nth-child(3),
+.room-table td:nth-child(3) {
+    width: 14%;
+}
+
+.room-table th:nth-child(4),
+.room-table td:nth-child(4) {
+    width: 12%;
+}
+
+.room-table th:nth-child(5),
+.room-table td:nth-child(5) {
+    width: 16%;
+}
+
+.room-table th:nth-child(6),
+.room-table td:nth-child(6) {
+    width: 14%;
+}
+
+.room-table th:nth-child(7),
+.room-table td:nth-child(7) {
+    width: 10%;
+}
+
 .room-thumb {
     width: 96px;
     height: 64px;
     object-fit: cover;
     border-radius: 12px;
     display: block;
+}
+
+.room-image-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.room-image-cell {
+    width: 110px;
 }
 
 .nhan-trang-thai {
@@ -266,6 +357,126 @@ a {
     grid-template-columns: 1fr auto;
     gap: 8px;
     align-items: end;
+}
+
+.room-admin-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 8px;
+    max-width: 800px;
+}
+
+.room-admin-form-section .room-admin-form {
+    width: 100%;
+}
+
+.room-admin-form-title h3 {
+    margin: 0 0 6px;
+    font-size: 20px;
+}
+
+.room-admin-form-title p {
+    margin: 0;
+    color: var(--muted);
+}
+
+.room-admin-form-section .room-admin-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    align-items: stretch;
+}
+
+.room-admin-form-section .room-admin-form-grid label {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-weight: 600;
+    color: var(--sea-deep);
+    min-height: 100%;
+}
+
+.room-admin-form-section .room-admin-form-grid input,
+.room-admin-form-section .room-admin-form-grid select {
+    width: 100%;
+    padding: 12px 12px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    font: inherit;
+    flex: 1;
+    min-height: 44px;
+    margin: 0;
+}
+
+.room-admin-form-section .room-admin-form-grid input[type="file"] {
+    display: flex;
+    align-items: center;
+    padding: 12px 12px;
+    margin: 0;
+}
+
+.room-admin-form-section .room-admin-actions {
+    display: flex;
+    margin-top: 12px;
+    flex-wrap: nowrap;
+    gap: 12px;
+    align-items: stretch;
+}
+
+.room-admin-form-section .room-admin-actions button,
+.room-admin-form-section .room-admin-actions .button {
+    flex: 1 1 0;
+    padding: 12px 18px;
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.button-secondary {
+    background: #eef4f6;
+    color: var(--sea-deep);
+    box-shadow: none;
+}
+
+.button-small {
+    padding: 8px 12px;
+    font-size: 13px;
+}
+
+.room-action-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 180px;
+}
+
+.room-action-stack form {
+    margin: 0;
+}
+
+.room-name-link {
+    color: var(--sea-deep);
+    text-decoration: none;
+}
+
+.room-name-link:hover {
+    text-decoration: underline;
+}
+
+.room-delete-note {
+    font-size: 12px;
+    color: #9d5b00;
+    font-weight: 700;
+}
+
+.room-action-stack button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
 }
 
 .hero {
@@ -455,6 +666,15 @@ input:focus {
     border-color: var(--sea);
 }
 
+.success {
+    margin: 16px 0 16px 0;
+    padding: 12px;
+    border-radius: 12px;
+    background: #d4f5e6;
+    border: 1px solid #a8e6d1;
+    color: #0f6b47;
+}
+
 .alert {
     margin: 16px 0 0;
     padding: 12px;
@@ -462,6 +682,14 @@ input:focus {
     background: #fff1d6;
     border: 1px solid #efc87c;
     color: #7a5015;
+}
+
+.success:empty,
+.alert:empty {
+    display: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
 }
 
 .section-title {
@@ -2514,7 +2742,7 @@ input:focus {
 
 .bk-success-sub {
     color: var(--muted);
-    font-size: 0.95rem;
+    font-size: 1rem;
     line-height: 1.6;
     margin: 0 0 28px;
 }
@@ -2576,10 +2804,11 @@ input:focus {
 
 .bk-btn-primary {
     padding: 12px 28px;
+    width: 80%;
     background: linear-gradient(135deg, var(--sea) 0%, var(--sea-deep) 100%);
     color: #fff;
     border-radius: 50px;
-    font-size: 0.92rem;
+    font-size: 1rem;
     font-weight: 600;
     text-decoration: none;
     transition: transform 0.16s, box-shadow 0.16s;
