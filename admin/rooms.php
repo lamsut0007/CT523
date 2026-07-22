@@ -5,6 +5,10 @@ require_admin_login();
 include "../includes/db.php";
 include "../includes/functions.php";
 
+$assetPathPrefix = '../';
+$hideBrandText = true;
+$brandHref = 'index.php';
+
 $pageTitle = "Quản lý phòng";
 $thongBao = "";
 $loi = "";
@@ -57,7 +61,13 @@ if ($conn != null) {
     $loi = $dbError;
 }
 
-include "includes/header.php";
+$headerNavItems = array(
+    array('href' => 'index.php', 'label' => 'Trang chủ'),
+    array('href' => 'rooms.php', 'label' => 'Quản lý phòng'),
+    array('href' => 'logout.php', 'label' => 'Đăng xuất'),
+);
+
+include "../includes/header.php";
 ?>
 
 <main class="admin-main">
@@ -132,4 +142,4 @@ include "includes/header.php";
     </div>
 </main>
 
-<?php include "includes/footer.php"; ?>
+<?php include "../includes/footer.php"; ?>

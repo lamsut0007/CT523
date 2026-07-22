@@ -35,6 +35,14 @@ function asset_url($duongDan)
     $duongDanThucTe = realpath($duongDanThucTe);
 
     if ($duongDanThucTe === false || !is_file($duongDanThucTe)) {
+        if ($duongDanFile !== "" && $duongDanFile[0] !== '/' && !preg_match('#^[A-Za-z]:/#', $duongDanFile)) {
+            $duongDanThucTe = dirname($baseDir) . '/' . $duongDanFile;
+            $duongDanThucTe = str_replace('//', '/', $duongDanThucTe);
+            $duongDanThucTe = realpath($duongDanThucTe);
+        }
+    }
+
+    if ($duongDanThucTe === false || !is_file($duongDanThucTe)) {
         return $duongDan;
     }
 

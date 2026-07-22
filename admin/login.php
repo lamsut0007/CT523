@@ -11,6 +11,9 @@ if (is_admin_logged_in()) {
 $pageTitle = "Đăng nhập quản trị";
 $error = "";
 
+$assetPathPrefix = '../';
+$skipHeader = true;
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = isset($_POST["username"]) ? trim($_POST["username"]) : "";
     $password = isset($_POST["password"]) ? trim($_POST["password"]) : "";
@@ -26,42 +29,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo h($pageTitle); ?></title>
-    <link rel="icon" href="<?php echo h(asset_url('../assets/logo/oasis-logo-short.png')); ?>" type="image/png">
-    <link rel="stylesheet" href="<?php echo h(asset_url('includes/admin.css')); ?>">
-</head>
-<body>
-    <main class="login-page">
-        <section class="login-card">
-            <a class="login-brand" href="../index.php" aria-label="OASIS Homestay">
-                <img class="login-brand-mark" src="<?php echo h(asset_url('../assets/logo/oasis-logo.png')); ?>" alt="OASIS Homestay">
-            </a>
-            <h1>Đăng nhập Admin</h1>
-            <p>Quản lý trạng thái phòng và lịch đặt cho OASIS Homestay.</p>
+<?php include "../includes/header.php"; ?>
 
-            <?php if ($error != "") { ?>
-                <p class="alert"><?php echo h($error); ?></p>
-            <?php } ?>
+<main class="login-page">
+    <section class="login-card">
+        <a class="login-brand" href="../index.php" aria-label="OASIS Homestay">
+            <img class="login-brand-mark" src="<?php echo h(asset_url($assetPathPrefix . 'assets/logo/oasis-logo.png')); ?>" alt="OASIS Homestay">
+        </a>
+        <h1>Đăng nhập Admin</h1>
+        <p>Trang quản lý OASIS Homestay</p>
 
-            <form method="post" action="login.php">
-                <label>
-                    Tên đăng nhập
-                    <input type="text" name="username" required>
-                </label>
+        <?php if ($error != "") { ?>
+            <p class="alert"><?php echo h($error); ?></p>
+        <?php } ?>
 
-                <label>
-                    Mật khẩu
-                    <input type="password" name="password" required>
-                </label>
+        <form method="post" action="login.php">
+            <label>
+                Tên đăng nhập
+                <input type="text" name="username" required>
+            </label>
 
-                <button type="submit">Đăng nhập</button>
-            </form>
-        </section>
-    </main>
-</body>
-</html>
+            <label>
+                Mật khẩu
+                <input type="password" name="password" required>
+            </label>
+
+            <button type="submit">Đăng nhập</button>
+        </form>
+    </section>
+</main>
