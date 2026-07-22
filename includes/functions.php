@@ -235,3 +235,25 @@ function lay_lich_dat_phong($conn, $idPhong, $soThang = 3)
     $stmt->close();
     return $danhSach;
 }
+
+function lay_phong_theo_id($conn, $idPhong)
+{
+    if ($conn === null || (int)$idPhong <= 0) {
+        return null;
+    }
+    $sql = "SELECT p.id_phong, p.ma_so_phong, p.ten_phong, p.duong_dan_hinh,
+                   p.trang_thai, lp.ten_loai_phong, lp.mo_ta, lp.suc_chua,
+                   lp.gia_theo_gio, lp.gia_theo_ngay
+            FROM phong p
+            INNER JOIN loai_phong lp ON p.id_loai_phong = lp.id_loai_phong
+            WHERE p.id_phong = ? AND p.trang_thai = 'dang_hoat_dong'
+            LIMIT 1";
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) return null;
+    $stmt->bind_param('i', $idPhong);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $phong = $result->fetch_assoc();
+    $stmt->close();
+    return $phong ?: null;
+}

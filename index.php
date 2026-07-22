@@ -121,7 +121,7 @@ include "includes/header.php";
                 để dừng chân trước khi tiếp tục hành trình.
             </p>
         </div>
-        <a class="button" href="rooms.php">Chọn phòng phù hợp</a>
+        <a class="location-link" href="rooms.php">Chọn phòng phù hợp</a>
     </section>
 </main>
 
