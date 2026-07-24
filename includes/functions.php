@@ -1,4 +1,7 @@
 <?php
+
+date_default_timezone_set('Asia/Ho_Chi_Minh');
+
 function h($giaTri)
 {
     return htmlspecialchars($giaTri, ENT_QUOTES, "UTF-8");

@@ -4,11 +4,27 @@ include "includes/db.php";
 include "includes/functions.php";
 
 // ── Lấy tham số từ URL ────────────────────────────────────────────────────
+date_default_timezone_set('Asia/Ho_Chi_Minh');
+$now = new DateTimeImmutable('now');
+$nowPlusOne = $now->modify('+1 hour');
+if ((int)$nowPlusOne->format('i') > 0) {
+    $nowPlusOne = $nowPlusOne->modify('+1 hour');
+}
+$nowPlusOne = $nowPlusOne->setTime((int)$nowPlusOne->format('H'), 0);
+$defaultGioNhan = $nowPlusOne->format('H:i');
+$defaultGioTra = $nowPlusOne->modify('+1 hour')->format('H:i');
+$today = $now->format('Y-m-d');
+$tomorrow = $now->modify('+1 day')->format('Y-m-d');
+$dailyMin = ((int)$now->format('H') >= 13) ? $tomorrow : $today;
+$hourlyMin = ($nowPlusOne->format('Y-m-d') === $today) ? $today : $tomorrow;
+$defaultNgayNhan = $today;
+$defaultNgayTra = $tomorrow;
+
 $idPhong  = isset($_GET['id'])        ? (int)$_GET['id']           : 0;
-$ngayNhan = isset($_GET['ngay_nhan']) ? trim($_GET['ngay_nhan'])   : '';
-$ngayTra  = isset($_GET['ngay_tra'])  ? trim($_GET['ngay_tra'])    : '';
-$gioNhan  = isset($_GET['gio_nhan'])  ? trim($_GET['gio_nhan'])    : '14:00';
-$gioTra   = isset($_GET['gio_tra'])   ? trim($_GET['gio_tra'])     : '12:00';
+$ngayNhan = isset($_GET['ngay_nhan']) ? trim($_GET['ngay_nhan'])   : $defaultNgayNhan;
+$ngayTra  = isset($_GET['ngay_tra'])  ? trim($_GET['ngay_tra'])    : $defaultNgayTra;
+$gioNhan  = isset($_GET['gio_nhan'])  ? trim($_GET['gio_nhan'])    : $defaultGioNhan;
+$gioTra   = isset($_GET['gio_tra'])   ? trim($_GET['gio_tra'])     : $defaultGioTra;
 
 $today = date('Y-m-d');
 
@@ -31,9 +47,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $email        = trim($_POST['email']         ?? '');
     $diaChi       = trim($_POST['dia_chi']       ?? '');
     $ngayNhanPost = trim($_POST['ngay_nhan']     ?? '');
-    $gioNhanPost  = trim($_POST['gio_nhan']      ?? '14:00');
+    $gioNhanPost  = trim($_POST['gio_nhan']      ?? $defaultGioNhan);
     $ngayTraPost  = trim($_POST['ngay_tra']      ?? '');
-    $gioTraPost   = trim($_POST['gio_tra']       ?? '12:00');
+    $gioTraPost   = trim($_POST['gio_tra']       ?? $defaultGioTra);
     $kieuDat      = ($_POST['kieu_dat'] ?? 'ngay') === 'gio' ? 'gio' : 'ngay';
     $soLuong      = max(1, (int)($_POST['so_luong'] ?? 1));
     $ghiChu       = trim($_POST['ghi_chu']       ?? '');
@@ -59,10 +75,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $fieldErrors['ngay_tra'] = 'Vui lòng chọn ngày trả phòng.';
     }
     if (empty($fieldErrors) && $ngayNhanPost !== '' && $ngayTraPost !== '') {
-        $dtCheck = tao_datetime_tu_ngay_gio($ngayNhanPost, $gioNhanPost);
-        $dtChk2  = tao_datetime_tu_ngay_gio($ngayTraPost,  $gioTraPost);
-        if ($dtChk2 <= $dtCheck) {
-            $fieldErrors['ngay_tra'] = 'Thời gian trả phòng phải sau thời gian nhận phòng.';
+        $dtCheckObj = DateTimeImmutable::createFromFormat('Y-m-d H:i', $ngayNhanPost . ' ' . $gioNhanPost);
+        $dtTraObj   = DateTimeImmutable::createFromFormat('Y-m-d H:i', $ngayTraPost . ' ' . $gioTraPost);
+
+        if (!$dtCheckObj || !$dtTraObj) {
+            $fieldErrors['ngay_nhan'] = 'Thời gian đặt phòng không hợp lệ.';
+        } else {
+            if ($dtTraObj <= $dtCheckObj) {
+                $fieldErrors['ngay_tra'] = 'Thời gian trả phòng phải sau thời gian nhận phòng.';
+            }
+
+            $now = new DateTimeImmutable('now');
+            $minBooking = $now->modify('+1 hour');
+            if ($dtCheckObj < $minBooking) {
+                $fieldErrors['ngay_nhan'] = 'Thời gian nhận phòng phải cách thời điểm hiện tại ít nhất 1 giờ.';
+            }
+
+            if ($kieuDat === 'ngay' && $ngayNhanPost === $today && (int)$now->format('H') >= 13) {
+                $fieldErrors['ngay_nhan'] = 'Sau 13:00 hôm nay chỉ có thể đặt phòng bắt đầu từ ngày mai.';
+            }
         }
     }
 
@@ -332,7 +363,7 @@ include "includes/header.php";
                     <label for="ngay_nhan" class="bk-label">Ngày nhận phòng <span class="bk-required">*</span></label>
                     <input id="ngay_nhan" type="date" name="ngay_nhan"
                            class="bk-input <?php echo isset($fieldErrors['ngay_nhan']) ? 'bk-input-err' : ''; ?>"
-                           min="<?php echo $today; ?>"
+                           min="<?php echo h($minDayBooking); ?>"
                            value="<?php echo h($ngayNhan); ?>" required>
                     <?php if (isset($fieldErrors['ngay_nhan'])): ?>
                         <p class="bk-err-msg"><?php echo h($fieldErrors['ngay_nhan']); ?></p>
@@ -344,7 +375,7 @@ include "includes/header.php";
                     <label for="ngay_tra" class="bk-label">Ngày trả phòng <span class="bk-required">*</span></label>
                     <input id="ngay_tra" type="date" name="ngay_tra"
                            class="bk-input <?php echo isset($fieldErrors['ngay_tra']) ? 'bk-input-err' : ''; ?>"
-                           min="<?php echo $today; ?>"
+                           min="<?php echo h($ngayNhan); ?>"
                            value="<?php echo h($ngayTra); ?>" required>
                     <?php if (isset($fieldErrors['ngay_tra'])): ?>
                         <p class="bk-err-msg"><?php echo h($fieldErrors['ngay_tra']); ?></p>
@@ -578,6 +609,11 @@ include "includes/header.php";
     var inputGioNhan      = document.getElementById('gio_nhan');
     var inputGioTra       = document.getElementById('gio_tra');
     var calendarSelected  = null;
+    var defaultGioNhan    = '<?php echo h($defaultGioNhan); ?>';
+    var defaultGioTra     = '<?php echo h($defaultGioTra); ?>';
+    var dailyMinDate      = '<?php echo h($dailyMin); ?>';
+    var hourlyMinDate     = '<?php echo h($hourlyMin); ?>';
+    var todayDate         = '<?php echo h($today); ?>';
 
     function getKieu() {
         for (var i = 0; i < radios.length; i++) {
@@ -641,6 +677,17 @@ include "includes/header.php";
         renderTotal();
     }
 
+    function addOneHour(timeValue) {
+        if (!timeValue) return '01:00';
+        var parts = timeValue.split(':');
+        if (parts.length !== 2) return '01:00';
+        var d = new Date('1970-01-01T' + parts[0].padStart(2, '0') + ':' + parts[1].padStart(2, '0'));
+        d.setHours(d.getHours() + 1);
+        var h = String(d.getHours()).padStart(2, '0');
+        var m = String(d.getMinutes()).padStart(2, '0');
+        return h + ':' + m;
+    }
+
     function updateCalendarSelection(dateKey) {
         if (!dateKey || !inputNhan || !inputTra) return;
         inputNhan.value = dateKey;
@@ -653,8 +700,12 @@ include "includes/header.php";
         }
 
         if (getKieu() === 'gio' && inputGioNhan && inputGioTra) {
-            if (!inputGioNhan.value) inputGioNhan.value = '14:00';
-            if (!inputGioTra.value || inputGioTra.value <= inputGioNhan.value) inputGioTra.value = '16:00';
+            if (!inputGioNhan.value) inputGioNhan.value = '<?php echo h($defaultGioNhan); ?>';
+            if (!inputGioTra.value || inputGioTra.value <= inputGioNhan.value) inputGioTra.value = addOneHour(inputGioNhan.value);
+            if (inputGioNhan.value < '<?php echo h($defaultGioNhan); ?>') {
+                inputGioNhan.value = '<?php echo h($defaultGioNhan); ?>';
+                inputGioTra.value = addOneHour(inputGioNhan.value);
+            }
         }
 
         if (calendarSelected) calendarSelected.classList.remove('selected');
@@ -687,7 +738,14 @@ include "includes/header.php";
         });
         inputTra.addEventListener('change', syncDuration);
     }
-    if (inputGioNhan) inputGioNhan.addEventListener('change', syncDuration);
+    if (inputGioNhan) {
+        inputGioNhan.addEventListener('change', function () {
+            if (inputGioTra && inputGioTra.value <= inputGioNhan.value) {
+                inputGioTra.value = addOneHour(inputGioNhan.value);
+            }
+            syncDuration();
+        });
+    }
     if (inputGioTra) inputGioTra.addEventListener('change', syncDuration);
     
     // Handle radio change: show/hide fields based on booking type
@@ -696,31 +754,50 @@ include "includes/header.php";
         var ngayTraWrap = document.getElementById('bk-ngay-tra-wrap');
         var gioNhanWrap = document.getElementById('bk-gio-nhan-wrap');
         var gioTraWrap = document.getElementById('bk-gio-tra-wrap');
-        
+
         if (kieu === 'ngay') {
             // Theo đêm: show ngay_tra, hide giờ nhận/trả
             if (ngayTraWrap) ngayTraWrap.style.display = 'block';
             if (gioNhanWrap) gioNhanWrap.style.display = 'none';
             if (gioTraWrap) gioTraWrap.style.display = 'none';
-            
-            // Set default giờ
-            if (inputGioNhan) inputGioNhan.value = '14:00';
-            if (inputGioTra) inputGioTra.value = '12:00';
-            
-            // Set ngay_tra = ngay_nhan + 1
-            if (inputNhan && inputNhan.value && inputTra) {
-                var nhanDate = new Date(inputNhan.value + 'T00:00');
-                var traDate = new Date(nhanDate);
-                traDate.setDate(traDate.getDate() + 1);
-                inputTra.value = localDateKey(traDate);
+
+            if (inputNhan) {
+                inputNhan.min = dailyMinDate;
+                if (!inputNhan.value || inputNhan.value < dailyMinDate) {
+                    inputNhan.value = dailyMinDate;
+                }
+            }
+            if (inputTra) {
+                if (inputNhan && inputNhan.value) {
+                    var nhanDate = new Date(inputNhan.value + 'T00:00');
+                    var traDate = new Date(nhanDate);
+                    traDate.setDate(traDate.getDate() + 1);
+                    inputTra.value = localDateKey(traDate);
+                    inputTra.min = inputNhan.value;
+                }
             }
         } else {
             // Theo giờ: hide ngay_tra, show giờ nhận/trả
             if (ngayTraWrap) ngayTraWrap.style.display = 'none';
             if (gioNhanWrap) gioNhanWrap.style.display = 'block';
             if (gioTraWrap) gioTraWrap.style.display = 'block';
-            
-            // Set ngay_tra = ngay_nhan (same day, but hidden)
+
+            if (inputNhan) {
+                inputNhan.min = hourlyMinDate;
+                if (!inputNhan.value || inputNhan.value < hourlyMinDate) {
+                    inputNhan.value = hourlyMinDate;
+                }
+            }
+            if (inputGioNhan) {
+                inputGioNhan.min = defaultGioNhan;
+                if (!inputGioNhan.value || inputGioNhan.value < inputGioNhan.min) {
+                    inputGioNhan.value = inputGioNhan.min;
+                }
+            }
+            if (inputGioTra && inputGioNhan && inputGioNhan.value) {
+                inputGioTra.value = addOneHour(inputGioNhan.value);
+            }
+
             if (inputNhan && inputNhan.value && inputTra) {
                 inputTra.value = inputNhan.value;
             }

@@ -1,4 +1,6 @@
 <?php
+date_default_timezone_set('Asia/Ho_Chi_Minh');
+
 mysqli_report(MYSQLI_REPORT_OFF);
 
 $dbHost = "localhost";
