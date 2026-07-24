@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($conn == null) {
         $error = $dbError;
     } elseif (dang_nhap_admin($conn, $username, $password)) {
-        header("Location: rooms.php");
+        header("Location: index.php");
         exit;
     } else {
         $error = "Tên đăng nhập hoặc mật khẩu không đúng.";

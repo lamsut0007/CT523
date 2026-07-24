@@ -35,9 +35,10 @@ $assetPathPrefix = '../';
 $hideBrandText = true;
 $brandHref = 'index.php';
 $headerNavItems = array(
-    array('href' => 'index.php', 'label' => 'Trang chủ'),
-    array('href' => 'rooms.php', 'label' => 'Quản lý phòng'),
-    array('href' => 'logout.php', 'label' => 'Đăng xuất'),
+    array('href' => 'index.php',    'label' => 'Trang chủ'),
+    array('href' => 'rooms.php',    'label' => 'Quản lý phòng'),
+    array('href' => 'bookings.php', 'label' => 'Quản lý đặt phòng'),
+    array('href' => 'logout.php',   'label' => 'Đăng xuất'),
 );
 
 include "../includes/header.php";
@@ -47,27 +48,11 @@ include "../includes/header.php";
     <div class="admin-container">
         <section class="page-title">
             <h1>Trang chủ Admin</h1>
-            <p>Một góc nhỏ để nhìn nhanh tình trạng phòng trên đảo. Gọn, rõ và đủ dùng.</p>
         </section>
 
         <?php if ($loiThongKe != "") { ?>
             <p class="alert"><?php echo h($loiThongKe); ?></p>
         <?php } ?>
-
-        <section class="admin-dashboard">
-            <div class="summary-card">
-                <strong><?php echo h($tongSoPhong); ?></strong>
-                <span>Tổng số phòng</span>
-            </div>
-            <div class="summary-card">
-                <strong><?php echo h($soPhongDangHoatDong); ?></strong>
-                <span>Phòng đang hoạt động</span>
-            </div>
-            <div class="summary-card">
-                <strong><?php echo h($soPhongTuSua); ?></strong>
-                <span>Phòng đang tu sửa</span>
-            </div>
-        </section>
 
         <section class="admin-card admin-action-card">
             <div>
@@ -75,6 +60,14 @@ include "../includes/header.php";
                 <p>Phòng nào sẵn sàng thì mở cửa, phòng nào cần chăm lại thì đưa vào tu sửa. Gọn vậy thôi.</p>
             </div>
             <a class="button" href="rooms.php">Vào quản lý phòng</a>
+        </section>
+
+        <section class="admin-card admin-action-card" style="margin-top:18px">
+            <div>
+                <h2>Quản lý đặt phòng</h2>
+                <p>Xem toàn bộ đơn đặt phòng, xác nhận thanh toán và phát hiện lịch trùng.</p>
+            </div>
+            <a class="button" href="bookings.php">Vào quản lý đặt phòng</a>
         </section>
     </div>
 </main>

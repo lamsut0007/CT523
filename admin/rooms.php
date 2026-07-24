@@ -276,9 +276,10 @@ if ($conn != null) {
 }
 
 $headerNavItems = array(
-    array('href' => 'index.php', 'label' => 'Trang chủ'),
-    array('href' => 'rooms.php', 'label' => 'Quản lý phòng'),
-    array('href' => 'logout.php', 'label' => 'Đăng xuất'),
+    array('href' => 'index.php',    'label' => 'Trang chủ'),
+    array('href' => 'rooms.php',    'label' => 'Quản lý phòng'),
+    array('href' => 'bookings.php', 'label' => 'Quản lý đặt phòng'),
+    array('href' => 'logout.php',   'label' => 'Đăng xuất'),
 );
 
 include "../includes/header.php";
@@ -357,7 +358,6 @@ include "../includes/header.php";
         <section class="room-admin-list-card room-admin-list-section">
             <div class="room-admin-list-intro">
                 <h2>Danh sách phòng</h2>
-                <p>Nhấn vào tên phòng để mở form chỉnh sửa. Chỉ có thể xóa phòng khi chưa có booking từ hôm nay trở đi.</p>
             </div>
             <table class="room-table">
                 <thead>
@@ -401,7 +401,7 @@ include "../includes/header.php";
                                         <form method="post" action="rooms.php" onsubmit="return confirm('Bạn có chắc muốn xóa phòng này?');">
                                             <input type="hidden" name="action" value="delete_room">
                                             <input type="hidden" name="id_phong" value="<?php echo h($phong["id_phong"]); ?>">
-                                            <button type="submit" <?php if ((int) $phong["co_booking_tuong_lai"] > 0) echo 'disabled title="Phòng này có booking nên không thể xóa"'; ?>>Xóa</button>
+                                            <button type="submit" <?php if ((int) $phong["co_booking_tuong_lai"] > 0) echo 'disabled title="Phòng này đã đặt nên không thể xóa"'; ?>>Xóa</button>
                                         </form>
                                     </div>
                                 </td>
