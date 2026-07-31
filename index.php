@@ -124,4 +124,21 @@ include "includes/header.php";
     </section>
 </main>
 
+<script>
+(function () {
+    var form = document.querySelector('.search-box form');
+    if (!form) return;
+    form.addEventListener('submit', function (event) {
+        var start = new Date((document.getElementById('home_ngay_nhan_phong').value || '') + 'T' + (document.getElementById('home_gio_nhan_phong').value || '00:00'));
+        var end = new Date((document.getElementById('home_ngay_tra_phong').value || '') + 'T' + (document.getElementById('home_gio_tra_phong').value || '00:00'));
+        if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+            event.preventDefault(); alert('Vui lòng chọn đủ ngày và giờ nhận/trả phòng.');
+        } else if (start.getTime() < Date.now() + 3600000) {
+            event.preventDefault(); alert('Thời gian nhận phòng phải lớn hơn hiện tại ít nhất 1 giờ.');
+        } else if (end <= start) {
+            event.preventDefault(); alert('Thời gian trả phòng phải sau thời gian nhận phòng.');
+        }
+    });
+})();
+</script>
 <?php include "includes/footer.php"; ?>

@@ -32,6 +32,18 @@ if ($soKhach < 1) {
     $soKhach = 1;
 }
 
+$goiYNgay = array();
+$goiYChiaPhong = array();
+
+if ($ngayNhanPhong !== '' && $ngayTraPhong !== '') {
+    $loiTimKiem = validate_booking_window($ngayNhanPhong, $gioNhanPhong, $ngayTraPhong, $gioTraPhong, 'gio', BOOKING_MIN_LEAD_SECONDS);
+    if (!empty($loiTimKiem)) {
+        $loiNgay = 'Thời gian tìm phòng phải lớn hơn hiện tại ít nhất 1 giờ và ngày trả phải sau ngày nhận.';
+        $ngayNhanPhong = '';
+        $ngayTraPhong = '';
+    }
+}
+
 if (($ngayNhanPhong == "" && $ngayTraPhong != "") || ($ngayNhanPhong != "" && $ngayTraPhong == "")) {
     $loiNgay = "Nhập giúp tụi mình đủ ngày nhận và ngày trả nha, chỉ một nửa lịch thì hệ thống không biết lọc sao.";
     $ngayNhanPhong = "";
@@ -43,6 +55,15 @@ if (($ngayNhanPhong == "" && $ngayTraPhong != "") || ($ngayNhanPhong != "" && $n
 }
 
 $danhSachPhong = lay_phong_dang_hoat_dong($conn, $ngayNhanPhong, $ngayTraPhong, $soKhach, $gioNhanPhong, $gioTraPhong);
+if ($ngayNhanPhong !== '' && $ngayTraPhong !== '' && count($danhSachPhong) === 0 && $conn !== null) {
+    $soDem = max(1, (int) (new DateTimeImmutable($ngayNhanPhong))->diff(new DateTimeImmutable($ngayTraPhong))->days);
+    $allRooms = lay_phong_dang_hoat_dong($conn, '', '', $soKhach);
+    foreach ($allRooms as $room) {
+        $lichGoiY = goi_y_ngay_trong_cho_phong($conn, (int) $room['id_phong'], $soDem, date('Y-m-d', strtotime($ngayTraPhong)), 45);
+        if ($lichGoiY) $goiYNgay[] = array('phong' => $room, 'lich' => $lichGoiY);
+    }
+    $goiYChiaPhong = goi_y_chia_phong_lien_tuc($conn, $ngayNhanPhong, $ngayTraPhong, $soKhach);
+}
 include "includes/header.php";
 ?>
 
@@ -149,21 +170,29 @@ include "includes/header.php";
                             </div>
                         </div>
                         <div class="room-info">
-                            <p class="badge"><?php echo h($phong["ma_so_phong"]); ?></p>
-                            <h3><?php echo h($phong["ten_phong"]); ?></h3>
+                            <div class="room-heading">
+                                <p class="badge"><?php echo h($phong["ma_so_phong"]); ?></p>
+                                <h3><?php echo h($phong["ten_phong"]); ?></h3>
+                            </div>
                             <p><?php echo h($phong["mo_ta"]); ?></p>
                             <p class="room-meta">
-                                Loại phòng: <?php echo h($phong["ten_loai_phong"]); ?> |
-                                Sức chứa: <?php echo h($phong["suc_chua"]); ?> khách
+                                <span>Loại phòng: <?php echo h($phong["ten_loai_phong"]); ?></span>
+                                <span>Sức chứa: <?php echo h($phong["suc_chua"]); ?> khách</span>
                             </p>
                             <p class="price"><?php echo tien_viet_nam($phong["gia_theo_ngay"]); ?> / đêm</p>
                             <p class="muted"><?php echo tien_viet_nam($phong["gia_theo_gio"]); ?> / giờ</p>
-                            <p class="room-card-cta">Nhấn để xem chi tiết &amp; tính giá →</p>
+                            <p class="room-card-cta">Nhấn để xem chi tiết &amp; tính giá <span class="room-card-arrow" aria-hidden="true">→</span></p>
                         </div>
                     </article>
                 <?php } ?>
             <?php } else { ?>
                 <p class="empty">Chưa thấy phòng nào hợp lịch này. Thử đổi ngày hoặc giảm số khách một chút nha.</p>
+                <?php if ($goiYNgay) { ?>
+                    <section class="suggestion-card"><h3>Gợi ý ngày trống tiếp theo</h3><p>Phòng bạn tìm vẫn có thể đặt vào các lịch sau:</p>
+                        <?php foreach ($goiYNgay as $suggest) { ?><div class="suggestion-row"><strong><?php echo h($suggest['phong']['ten_phong']); ?></strong><span><?php foreach ($suggest['lich'] as $idx => $slot) { if ($idx) echo ' · '; ?><a href="rooms.php?ngay_nhan_phong=<?php echo h($slot['tu']); ?>&ngay_tra_phong=<?php echo h($slot['den']); ?>&gio_nhan_phong=14:00&gio_tra_phong=12:00&so_khach=<?php echo (int) $soKhach; ?>#rooms"><?php echo h(dinh_dang_ngay($slot['tu'])); ?> - <?php echo h(dinh_dang_ngay($slot['den'])); ?></a><?php } ?></span></div><?php } ?>
+                    </section>
+                <?php } ?>
+                <?php if ($goiYChiaPhong) { ?><section class="suggestion-card"><h3>Gợi ý chia phòng cho <?php echo (int) ((new DateTimeImmutable($ngayNhanPhong))->diff(new DateTimeImmutable($ngayTraPhong))->days); ?> đêm</h3><p>Không có một phòng liền mạch, nhưng có thể chuyển phòng giữa hành trình:</p><div class="suggestion-timeline"><?php foreach ($goiYChiaPhong as $segment) { ?><div><strong><?php echo h($segment['ten_phong']); ?> (<?php echo h($segment['ma_so_phong']); ?>)</strong><span><?php echo h(dinh_dang_ngay($segment['tu'])); ?> → <?php echo h(dinh_dang_ngay($segment['den'])); ?> · <?php echo (int) $segment['so_dem']; ?> đêm</span></div><?php } ?></div></section><?php } ?>
             <?php } ?>
         </div>
     </section>

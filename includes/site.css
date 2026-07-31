@@ -768,28 +768,82 @@ input:focus {
 }
 
 .room-info h3 {
-    margin-top: 0;
+    min-width: 0;
+    overflow: hidden;
+    margin: 0;
+    font-size: 20px;
+    line-height: 1.25;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .badge {
     display: inline-block;
-    margin: 0 0 10px;
+    flex: 0 0 auto;
+    margin: 0;
     padding: 4px 10px;
     border-radius: 999px;
     background: rgba(28, 107, 122, 0.1);
     color: var(--sea-deep);
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 700;
+}
+
+.room-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.room-heading h3 {
+    flex: 1 1 auto;
+}
+
+.room-info > p:not(.room-meta):not(.price):not(.muted):not(.room-card-cta) {
+    margin: 0 0 10px;
+    line-height: 1.55;
 }
 
 .room-meta,
 .muted {
-    font-size: 14px;
+    font-size: 16px;
+}
+
+.room-meta {
+    display: grid;
+    gap: 2px;
+    margin: 0 0 16px;
+    color: #3c5961;
+    line-height: 1.45;
 }
 
 .price {
+    margin: 0 0 5px;
     color: var(--sea-deep);
+    font-size: 16px;
     font-weight: 700;
+    line-height: 1.45;
+}
+
+.room-info > .muted {
+    margin: 0 0 18px;
+    color: var(--sea-deep);
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.45;
+}
+
+.room-card-cta {
+    margin: 0;
+    line-height: 1.45;
+}
+
+.room-card-arrow {
+    display: inline-block;
+    margin-left: 2px;
+    font-size: 1.15em;
+    font-weight: 800;
 }
 
 .empty {
@@ -1225,8 +1279,8 @@ input:focus {
 
 .room-modal-desc {
     margin: 0 0 12px;
-    color: var(--muted);
-    font-size: 14px;
+    color: #3c5961;
+    font-size: 15px;
     line-height: 1.6;
 }
 
@@ -1234,7 +1288,7 @@ input:focus {
     display: flex;
     flex-wrap: wrap;
     gap: 4px 0;
-    font-size: 13px;
+    font-size: 14px;
     color: var(--ink);
     margin-bottom: 4px;
 }
@@ -2879,6 +2933,10 @@ input:focus {
     margin-top: 0;
 }
 
+.admin-main > .admin-container > .alert {
+    margin-bottom: 24px;
+}
+
 /* ── Room grid ── */
 .booking-room-grid {
     display: grid;
@@ -2999,7 +3057,7 @@ input:focus {
 .booking-table thead th {
     background: rgba(248, 243, 233, 0.9);
     font-weight: 700;
-    font-size: 13px;
+    font-size: 14px;
     color: var(--sea-deep);
     white-space: nowrap;
     text-align: center;
@@ -3215,6 +3273,247 @@ input:focus {
     color: var(--muted);
     text-align: center;
     padding: 24px 0;
+}
+
+/* New reservation/admin views */
+.bk-form-card,
+.bk-side-card,
+.suggestion-card {
+    background: rgba(255, 253, 248, 0.96);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 12px 30px rgba(24, 43, 48, 0.07);
+}
+
+.resort-map {
+    padding-top: 34px;
+}
+
+.resort-map-grid {
+    display: grid;
+    grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1.2fr);
+    gap: 18px;
+    align-items: stretch;
+}
+
+.resort-map-area {
+    min-height: 170px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #b9e4e8 0 30%, #dceccf 30% 65%, #d5b993 65%);
+    border: 1px solid var(--line);
+}
+
+.map-label {
+    position: absolute;
+    z-index: 1;
+    padding: 7px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.82);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.map-label-sea { top: 18px; left: 14px; color: #16606f; }
+.map-label-garden { right: 14px; bottom: 18px; color: #49612c; }
+.map-path { position: absolute; width: 70%; height: 38px; left: 15%; top: 52%; border: 5px solid rgba(255,255,255,.72); border-radius: 50%; transform: rotate(-12deg); }
+
+.resort-map-rooms {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+}
+
+.map-floor {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex-wrap: wrap;
+    padding: 13px 15px;
+    background: rgba(255, 253, 248, .95);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+}
+
+.map-floor strong { min-width: 55px; color: var(--sea-deep); }
+.map-floor span { padding: 6px 10px; background: #eaf5ef; color: var(--sea-deep); border-radius: 8px; font-size: 13px; font-weight: 700; }
+
+.bk-room-summary {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 22px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--line);
+}
+
+.bk-room-summary img {
+    width: 110px;
+    height: 82px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+.bk-room-summary h2,
+.bk-side-card h3,
+.suggestion-card h3 {
+    margin: 0 0 7px;
+}
+
+.bk-room-summary p,
+.bk-side-card p,
+.suggestion-card p {
+    color: var(--muted);
+    margin: 5px 0;
+    line-height: 1.55;
+}
+
+.suggestion-card {
+    margin-top: 18px;
+}
+
+.suggestion-row,
+.suggestion-timeline > div,
+.admin-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 0;
+    border-top: 1px solid var(--line);
+}
+
+.suggestion-row a {
+    color: var(--sea-deep);
+    font-weight: 700;
+}
+
+.suggestion-timeline > div {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.suggestion-timeline span,
+.admin-list-item span,
+.admin-list-item small {
+    color: var(--muted);
+}
+
+.admin-list-item {
+    display: grid;
+    grid-template-columns: 30% 24% minmax(0, 1fr) 130px;
+    justify-content: initial;
+}
+
+.admin-list-item > * {
+    min-width: 0;
+    text-align: left;
+}
+
+.admin-list-item small {
+    text-align: right;
+}
+
+.admin-two-column {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+    margin-top: 18px;
+}
+
+.admin-two-column > .room-admin-list-card:first-child {
+    order: 2;
+}
+
+.admin-two-column > .room-admin-list-card:last-child {
+    order: 1;
+}
+
+/* Fine-tuning admin room table and conflict messages */
+.alert {
+    white-space: pre-line;
+}
+
+.room-table th:nth-child(1), .room-table td:nth-child(1) { width: 14%; }
+.room-table th:nth-child(2), .room-table td:nth-child(2) { width: 20%; }
+.room-table th:nth-child(3), .room-table td:nth-child(3) { width: 14%; }
+.room-table th:nth-child(4), .room-table td:nth-child(4) { width: 12%; }
+.room-table th:nth-child(5), .room-table td:nth-child(5) { width: 16%; }
+.room-table th:nth-child(6), .room-table td:nth-child(6) { width: 14%; }
+.room-table th:nth-child(7), .room-table td:nth-child(7) { width: 10%; }
+
+.room-action-stack a.button-small,
+.room-action-stack button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 90px;
+    min-width: 90px;
+    height: 38px;
+    padding: 0;
+    box-sizing: border-box;
+    line-height: 1;
+    text-align: center;
+}
+
+.room-action-stack {
+    align-items: center;
+}
+
+.room-action-stack form {
+    width: 90px;
+}
+
+.room-table td:last-child,
+.room-table th:last-child {
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+.status-form {
+    display: flex;
+    gap: 7px;
+    align-items: center;
+}
+
+.status-form select {
+    min-width: 130px;
+    padding: 8px;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    background: #fff;
+}
+
+.room-cal-day[type="button"] {
+    font: inherit;
+    cursor: pointer;
+}
+
+.room-cal-day[type="button"]:disabled {
+    cursor: not-allowed;
+}
+
+.room-cal-day.room-cal-avail {
+    border: 1px solid transparent;
+}
+
+.room-cal-day.room-cal-avail:hover,
+.room-cal-day.selected {
+    border-color: var(--sea);
+    box-shadow: 0 0 0 2px rgba(28, 107, 122, 0.13);
+}
+
+@media (max-width: 800px) {
+    .admin-two-column { grid-template-columns: 1fr; }
+    .suggestion-row { align-items: flex-start; flex-direction: column; gap: 6px; }
+    .admin-list-item { grid-template-columns: 1fr; gap: 4px; }
+    .admin-list-item small { text-align: left; }
+    .status-form { flex-direction: column; align-items: stretch; }
+    .resort-map-grid { grid-template-columns: 1fr; }
 }
 
 /* ── Responsive ── */

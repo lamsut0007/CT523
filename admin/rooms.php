@@ -1,422 +1,66 @@
 <?php
-include "includes/auth.php";
-require_admin_login();
+include 'includes/auth.php'; require_admin_login();
+include '../includes/db.php'; include '../includes/functions.php';
+$pageTitle = 'Quản lý phòng'; $assetPathPrefix = '../'; $hideBrandText = true; $brandHref = 'index.php';
+$headerNavItems = array(array('href'=>'index.php','label'=>'Tổng quan'),array('href'=>'rooms.php','label'=>'Quản lý phòng'),array('href'=>'bookings.php','label'=>'Quản lý đặt phòng'),array('href'=>'logout.php','label'=>'Đăng xuất'));
+$message = ''; $error = ''; $showForm = isset($_GET['add']) || isset($_GET['edit_id']); $editId = (int) ($_GET['edit_id'] ?? 0);
+$roomTypes = array(); $editing = null;
+$values = array('id_loai_phong'=>'','ma_so_phong'=>'','ten_phong'=>'','tang'=>1,'vi_tri'=>'','huong_view'=>'','dien_tich'=>'','tien_nghi'=>'','gia_theo_gio'=>'','gia_theo_ngay'=>'','trang_thai'=>'dang_hoat_dong');
+if ($conn) { $res = $conn->query('SELECT id_loai_phong, ten_loai_phong, suc_chua FROM loai_phong ORDER BY ten_loai_phong'); if ($res) while ($row=$res->fetch_assoc()) $roomTypes[]=$row; }
 
-include "../includes/db.php";
-include "../includes/functions.php";
+function upload_room_images($files, $roomCode)
+{
+    $result = array(); $uploadDir = dirname(__DIR__) . '/assets/uploads/';
+    if (!is_dir($uploadDir)) @mkdir($uploadDir, 0775, true);
+    if (!isset($files['name']) || !is_array($files['name'])) return $result;
+    foreach ($files['name'] as $i => $name) {
+        if (($files['error'][$i] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) continue;
+        if (($files['size'][$i] ?? 0) > 5 * 1024 * 1024) continue;
+        $mime = function_exists('mime_content_type') ? mime_content_type($files['tmp_name'][$i]) : '';
+        if (!in_array($mime, array('image/jpeg','image/png','image/webp','image/gif'), true)) continue;
+        $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION)); $safe = preg_replace('/[^a-zA-Z0-9_-]/', '-', $roomCode);
+        $newName = $safe . '-' . ($i + 1) . '-' . time() . '.' . $ext;
+        if (move_uploaded_file($files['tmp_name'][$i], $uploadDir . $newName)) $result[] = 'assets/uploads/' . $newName;
+    }
+    return $result;
+}
 
-$assetPathPrefix = '../';
-$hideBrandText = true;
-$brandHref = 'index.php';
-
-$pageTitle = "Quản lý phòng";
-$thongBao = "";
-$loi = "";
-
-$formValues = array(
-    'id_phong' => 0,
-    'id_loai_phong' => '',
-    'ma_so_phong' => '',
-    'ten_phong' => '',
-    'duong_dan_hinh' => '',
-    'trang_thai' => 'dang_hoat_dong'
-);
-
-$editingRoom = null;
-$roomTypes = array();
-$showRoomForm = isset($_GET['add']) || isset($_GET['edit_id']);
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $action = isset($_POST["action"]) ? trim($_POST["action"]) : "";
-
-    $formValues = array(
-        'id_phong' => isset($_POST["id_phong"]) ? (int) $_POST["id_phong"] : 0,
-        'id_loai_phong' => isset($_POST["id_loai_phong"]) ? (int) $_POST["id_loai_phong"] : 0,
-        'ma_so_phong' => isset($_POST["ma_so_phong"]) ? trim($_POST["ma_so_phong"]) : "",
-        'ten_phong' => isset($_POST["ten_phong"]) ? trim($_POST["ten_phong"]) : "",
-        'duong_dan_hinh' => isset($_POST["duong_dan_hinh"]) ? trim($_POST["duong_dan_hinh"]) : "",
-        'trang_thai' => isset($_POST["trang_thai"]) ? trim($_POST["trang_thai"]) : "dang_hoat_dong"
-    );
-
-    if ($action === "save_room") {
-        $showRoomForm = true;
-        if ($conn == null) {
-            $loi = $dbError;
-        } else {
-            $idPhong = $formValues['id_phong'];
-            $maSoPhong = $formValues['ma_so_phong'];
-            $tenPhong = $formValues['ten_phong'];
-            $idLoaiPhong = $formValues['id_loai_phong'];
-            $trangThai = in_array($formValues['trang_thai'], array("dang_hoat_dong", "tu_sua")) ? $formValues['trang_thai'] : "dang_hoat_dong";
-            $anhPhongUploaded = isset($_FILES['anh_phong']) && $_FILES['anh_phong']['error'] === UPLOAD_ERR_OK;
-
-            if ($maSoPhong === "" || $tenPhong === "" || $idLoaiPhong <= 0) {
-                $loi = "Vui lòng nhập đầy đủ mã phòng, tên phòng và loại phòng.";
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $conn) {
+    $action = $_POST['action'] ?? '';
+    if ($action === 'save_room') {
+        $id = (int) ($_POST['id_phong'] ?? 0); $type = (int) ($_POST['id_loai_phong'] ?? 0); $code = trim($_POST['ma_so_phong'] ?? ''); $name = trim($_POST['ten_phong'] ?? '');
+        $tang = max(1, (int) ($_POST['tang'] ?? 1)); $position = trim($_POST['vi_tri'] ?? ''); $view = trim($_POST['huong_view'] ?? ''); $area = (float) ($_POST['dien_tich'] ?? 0); $amenities = trim($_POST['tien_nghi'] ?? ''); $priceHour = trim($_POST['gia_theo_gio'] ?? '') === '' ? null : (float) $_POST['gia_theo_gio']; $priceDay = trim($_POST['gia_theo_ngay'] ?? '') === '' ? null : (float) $_POST['gia_theo_ngay']; $status = in_array($_POST['trang_thai'] ?? '', array('dang_hoat_dong','tu_sua','tam_dung'), true) ? $_POST['trang_thai'] : 'dang_hoat_dong';
+        $values = array('id_loai_phong'=>$type,'ma_so_phong'=>$code,'ten_phong'=>$name,'tang'=>$tang,'vi_tri'=>$position,'huong_view'=>$view,'dien_tich'=>$area,'tien_nghi'=>$amenities,'gia_theo_gio'=>$priceHour,'gia_theo_ngay'=>$priceDay,'trang_thai'=>$status);
+        if ($type <= 0 || $code === '' || $name === '') $error = 'Vui lòng nhập đủ mã phòng, tên phòng và loại phòng.';
+        else {
+            $check = $conn->prepare('SELECT id_phong FROM phong WHERE ma_so_phong=? AND id_phong<>?'); $check->bind_param('si',$code,$id); $check->execute(); $check->store_result(); $duplicate=$check->num_rows>0; $check->close(); if ($duplicate) $error='Mã phòng đã tồn tại.';
+        }
+        if ($error === '') {
+            $images = upload_room_images($_FILES['anh_phong'] ?? array(), $code);
+            if ($id > 0) {
+                $old = lay_phong_theo_id($conn, $id, false); $imageValues = array($old['duong_dan_hinh'],$old['hinh_2'],$old['hinh_3'],$old['hinh_4']); foreach ($images as $idx=>$image) if ($idx<4) $imageValues[$idx]=$image;
+                $stmt=$conn->prepare('UPDATE phong SET id_loai_phong=?, ma_so_phong=?, ten_phong=?, tang=?, vi_tri=?, huong_view=?, dien_tich=?, tien_nghi=?, duong_dan_hinh=?, hinh_2=?, hinh_3=?, hinh_4=?, gia_theo_gio=?, gia_theo_ngay=?, trang_thai=? WHERE id_phong=?');
+                $stmt->bind_param('ississdsssssddsi',$type,$code,$name,$tang,$position,$view,$area,$amenities,$imageValues[0],$imageValues[1],$imageValues[2],$imageValues[3],$priceHour,$priceDay,$status,$id);
+                if ($stmt->execute()) $message='Đã cập nhật thông tin phòng.'; else $error='Không cập nhật được phòng. Hãy kiểm tra migration database.'; $stmt->close();
             } else {
-                $checkSql = "SELECT id_phong FROM phong WHERE ma_so_phong = ? AND id_phong != ?";
-                $checkStmt = $conn->prepare($checkSql);
-
-                if ($checkStmt) {
-                    $checkStmt->bind_param("si", $maSoPhong, $idPhong);
-                    $checkStmt->execute();
-                    $checkStmt->store_result();
-
-                    if ($checkStmt->num_rows > 0) {
-                        $loi = "Mã phòng này đã tồn tại. Vui lòng chọn mã khác.";
-                    } else {
-                        if ($idPhong > 0) {
-                            $sql = "UPDATE phong SET id_loai_phong = ?, ma_so_phong = ?, ten_phong = ?, trang_thai = ? WHERE id_phong = ?";
-                            $stmt = $conn->prepare($sql);
-                            if ($stmt) {
-                                $stmt->bind_param("isssi", $idLoaiPhong, $maSoPhong, $tenPhong, $trangThai, $idPhong);
-                                if ($stmt->execute()) {
-                                    if ($anhPhongUploaded) {
-                                        $targetDir = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'room';
-                                        if (!is_dir($targetDir)) {
-                                            mkdir($targetDir, 0777, true);
-                                        }
-                                        $targetPath = $targetDir . DIRECTORY_SEPARATOR . $idPhong . '.jpg';
-                                        if (move_uploaded_file($_FILES['anh_phong']['tmp_name'], $targetPath)) {
-                                            $relativePath = 'assets/room/' . $idPhong . '.jpg';
-                                            $pathSql = "UPDATE phong SET duong_dan_hinh = ? WHERE id_phong = ?";
-                                            $pathStmt = $conn->prepare($pathSql);
-                                            if ($pathStmt) {
-                                                $pathStmt->bind_param("si", $relativePath, $idPhong);
-                                                $pathStmt->execute();
-                                                $pathStmt->close();
-                                            }
-                                            $thongBao = "Đã thay đổi thông tin phòng thành công.";
-                                            $showRoomForm = false;
-                                            $editingRoom = null;
-                                            $formValues['id_phong'] = 0;
-                                            $formValues['id_loai_phong'] = '';
-                                            $formValues['ma_so_phong'] = '';
-                                            $formValues['ten_phong'] = '';
-                                            $formValues['duong_dan_hinh'] = '';
-                                            $formValues['trang_thai'] = 'dang_hoat_dong';
-                                        } else {
-                                            $loi = "Không lưu được file ảnh. Vui lòng thử lại.";
-                                        }
-                                    } else {
-                                        $thongBao = "Đã cập nhật thông tin phòng.";
-                                        $showRoomForm = false;
-                                        $editingRoom = null;
-                                        $formValues['id_phong'] = 0;
-                                        $formValues['id_loai_phong'] = '';
-                                        $formValues['ma_so_phong'] = '';
-                                        $formValues['ten_phong'] = '';
-                                        $formValues['duong_dan_hinh'] = '';
-                                        $formValues['trang_thai'] = 'dang_hoat_dong';
-                                    }
-                                } else {
-                                    $loi = "Không lưu được thông tin phòng. Thử lại sau.";
-                                }
-                                $stmt->close();
-                            } else {
-                                $loi = "Không chuẩn bị được câu lệnh cập nhật phòng.";
-                            }
-                        } else {
-                            $sql = "INSERT INTO phong (id_loai_phong, ma_so_phong, ten_phong, duong_dan_hinh, trang_thai) VALUES (?, ?, ?, ?, ?)";
-                            $stmt = $conn->prepare($sql);
-                            if ($stmt) {
-                                $defaultImagePath = '';
-                                $stmt->bind_param("issss", $idLoaiPhong, $maSoPhong, $tenPhong, $defaultImagePath, $trangThai);
-                                if ($stmt->execute()) {
-                                    $newRoomId = $conn->insert_id;
-                                    if ($anhPhongUploaded) {
-                                        $targetDir = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'room';
-                                        if (!is_dir($targetDir)) {
-                                            mkdir($targetDir, 0777, true);
-                                        }
-                                        $targetPath = $targetDir . DIRECTORY_SEPARATOR . $newRoomId . '.jpg';
-                                        if (move_uploaded_file($_FILES['anh_phong']['tmp_name'], $targetPath)) {
-                                            $relativePath = 'assets/room/' . $newRoomId . '.jpg';
-                                            $pathSql = "UPDATE phong SET duong_dan_hinh = ? WHERE id_phong = ?";
-                                            $pathStmt = $conn->prepare($pathSql);
-                                            if ($pathStmt) {
-                                                $pathStmt->bind_param("si", $relativePath, $newRoomId);
-                                                $pathStmt->execute();
-                                                $pathStmt->close();
-                                            }
-                                            $thongBao = "Đã thêm phòng mới.";
-                                            $showRoomForm = false;
-                                            $editingRoom = null;
-                                            $formValues['id_phong'] = 0;
-                                            $formValues['id_loai_phong'] = '';
-                                            $formValues['ma_so_phong'] = '';
-                                            $formValues['ten_phong'] = '';
-                                            $formValues['duong_dan_hinh'] = '';
-                                            $formValues['trang_thai'] = 'dang_hoat_dong';
-                                        } else {
-                                            $conn->query("DELETE FROM phong WHERE id_phong = $newRoomId");
-                                            $loi = "Không lưu được file ảnh. Phòng chưa được tạo.";
-                                        }
-                                    } else {
-                                        $thongBao = "Đã thêm phòng mới thành công.";
-                                        $showRoomForm = false;
-                                        $editingRoom = null;
-                                        $formValues['id_phong'] = 0;
-                                        $formValues['id_loai_phong'] = '';
-                                        $formValues['ma_so_phong'] = '';
-                                        $formValues['ten_phong'] = '';
-                                        $formValues['duong_dan_hinh'] = '';
-                                        $formValues['trang_thai'] = 'dang_hoat_dong';
-                                    }
-                                } else {
-                                    $loi = "Không thêm được phòng mới. Thử lại sau.";
-                                }
-                                $stmt->close();
-                            } else {
-                                $loi = "Không chuẩn bị được câu lệnh thêm phòng.";
-                            }
-                        }
-                    }
-                    $checkStmt->close();
-                } else {
-                    $loi = "Không kiểm tra được mã phòng trùng.";
-                }
+                $mainImage = $images[0] ?? 'assets/room/1.jpg'; $image2=$images[1]??null; $image3=$images[2]??null; $image4=$images[3]??null;
+                $stmt=$conn->prepare('INSERT INTO phong (id_loai_phong,ma_so_phong,ten_phong,tang,vi_tri,huong_view,dien_tich,tien_nghi,duong_dan_hinh,hinh_2,hinh_3,hinh_4,gia_theo_gio,gia_theo_ngay,trang_thai) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
+                $stmt->bind_param('ississdsssssdds',$type,$code,$name,$tang,$position,$view,$area,$amenities,$mainImage,$image2,$image3,$image4,$priceHour,$priceDay,$status);
+                if ($stmt->execute()) $message='Đã thêm phòng mới.'; else $error='Không thêm được phòng. Hãy kiểm tra dữ liệu.'; $stmt->close();
             }
+            if ($message !== '') { header('Location: rooms.php?msg=' . urlencode($message)); exit; }
         }
-    } elseif ($action === "delete_room") {
-        $idPhong = isset($_POST["id_phong"]) ? (int) $_POST["id_phong"] : 0;
-        if ($idPhong <= 0) {
-            $loi = "Không xác định được phòng cần xóa.";
-        } elseif ($conn == null) {
-            $loi = $dbError;
-        } else {
-            $countSql = "SELECT COUNT(*) AS total FROM dat_phong WHERE id_phong = ? AND (DATE(ngay_nhan_phong) >= CURDATE() OR DATE(ngay_tra_phong) >= CURDATE())";
-            $countStmt = $conn->prepare($countSql);
-            if ($countStmt) {
-                $countStmt->bind_param("i", $idPhong);
-                $countStmt->execute();
-                $countStmt->bind_result($totalDatPhong);
-                $countStmt->fetch();
-                $countStmt->close();
-
-                if ($totalDatPhong > 0) {
-                    $loi = "Không thể xóa phòng vì phòng này vẫn có người đã đặt từ hôm nay trở đi.";
-                } else {
-                    $deleteSql = "DELETE FROM phong WHERE id_phong = ?";
-                    $deleteStmt = $conn->prepare($deleteSql);
-                    if ($deleteStmt) {
-                        $deleteStmt->bind_param("i", $idPhong);
-                        if ($deleteStmt->execute()) {
-                            $thongBao = "Đã xóa phòng khỏi hệ thống.";
-                        } else {
-                            $loi = "Không xóa được phòng. Thử lại sau.";
-                        }
-                        $deleteStmt->close();
-                    } else {
-                        $loi = "Không chuẩn bị được câu lệnh xóa phòng.";
-                    }
-                }
-            } else {
-                $loi = "Không kiểm tra được dữ liệu đặt phòng.";
-            }
-        }
+    } elseif ($action === 'delete_room') {
+        $id=(int)($_POST['id_phong']??0); $check=$conn->prepare("SELECT COUNT(*) FROM dat_phong WHERE id_phong=? AND trang_thai IN ('da_xac_nhan','da_nhan_phong') AND ngay_tra_phong>NOW()"); $check->bind_param('i',$id); $check->execute(); $check->bind_result($count); $check->fetch(); $check->close();
+        if ($count>0) $error='Phòng còn lịch đặt trong tương lai nên không thể xóa. Hãy chuyển sang Tạm dừng.'; else { $stmt=$conn->prepare('DELETE FROM phong WHERE id_phong=?'); $stmt->bind_param('i',$id); $message=$stmt->execute()?'Đã xóa phòng.':'Không thể xóa phòng đã có lịch sử đặt.'; $stmt->close(); }
+        if ($error==='' && $message!=='') { header('Location: rooms.php?msg='.urlencode($message)); exit; }
     }
 }
-
-$editId = isset($_GET["edit_id"]) ? (int) $_GET["edit_id"] : 0;
-if ($editId > 0 && $conn != null) {
-    $editSql = "SELECT id_phong, id_loai_phong, ma_so_phong, ten_phong, duong_dan_hinh, trang_thai FROM phong WHERE id_phong = ?";
-    $editStmt = $conn->prepare($editSql);
-    if ($editStmt) {
-        $editStmt->bind_param("i", $editId);
-        $editStmt->execute();
-        $editResult = $editStmt->get_result();
-        if ($editResult && $editResult->num_rows > 0) {
-            $editingRoom = $editResult->fetch_assoc();
-            $formValues = array(
-                'id_phong' => (int) $editingRoom['id_phong'],
-                'id_loai_phong' => (int) $editingRoom['id_loai_phong'],
-                'ma_so_phong' => $editingRoom['ma_so_phong'],
-                'ten_phong' => $editingRoom['ten_phong'],
-                'duong_dan_hinh' => $editingRoom['duong_dan_hinh'],
-                'trang_thai' => $editingRoom['trang_thai']
-            );
-            $showRoomForm = true;
-        }
-        $editStmt->close();
-    }
-}
-
-$danhSachPhong = array();
-
-if ($conn != null) {
-    $roomTypeSql = "SELECT id_loai_phong, ten_loai_phong, suc_chua, gia_theo_ngay FROM loai_phong ORDER BY id_loai_phong ASC";
-    $roomTypeResult = $conn->query($roomTypeSql);
-    if ($roomTypeResult) {
-        while ($roomType = $roomTypeResult->fetch_assoc()) {
-            $roomTypes[] = $roomType;
-        }
-    }
-
-    $sql = "SELECT p.id_phong, p.ma_so_phong, p.ten_phong, p.duong_dan_hinh, p.trang_thai,
-                   lp.ten_loai_phong, lp.suc_chua, lp.gia_theo_ngay,
-                   (SELECT COUNT(*)
-                    FROM dat_phong dp
-                    WHERE dp.id_phong = p.id_phong
-                      AND (DATE(dp.ngay_nhan_phong) >= CURDATE() OR DATE(dp.ngay_tra_phong) >= CURDATE())) AS co_booking_tuong_lai
-            FROM phong p
-            INNER JOIN loai_phong lp ON p.id_loai_phong = lp.id_loai_phong
-            ORDER BY p.ma_so_phong ASC";
-
-    $ketQua = $conn->query($sql);
-
-    if ($ketQua) {
-        while ($dong = $ketQua->fetch_assoc()) {
-            $danhSachPhong[] = $dong;
-        }
-    } else {
-        $loi = "Chưa tải được danh sách phòng. Import lại files/db/schema.sql để admin đọc đúng bảng mới nha.";
-    }
-} elseif ($loi == "") {
-    $loi = $dbError;
-}
-
-$headerNavItems = array(
-    array('href' => 'index.php',    'label' => 'Trang chủ'),
-    array('href' => 'rooms.php',    'label' => 'Quản lý phòng'),
-    array('href' => 'bookings.php', 'label' => 'Quản lý đặt phòng'),
-    array('href' => 'logout.php',   'label' => 'Đăng xuất'),
-);
-
-include "../includes/header.php";
+if (isset($_GET['msg'])) $message=$_GET['msg'];
+if ($editId > 0 && $conn) { $editing=lay_phong_theo_id($conn,$editId,false); if ($editing) { $showForm=true; foreach ($values as $key=>$unused) if (array_key_exists($key,$editing)) $values[$key]=$editing[$key]; $values['gia_theo_gio']=$editing['gia_phong_gio']; $values['gia_theo_ngay']=$editing['gia_phong_ngay']; } }
+$rooms=array(); if ($conn) { $res=$conn->query("SELECT p.*,lp.ten_loai_phong,lp.suc_chua,(SELECT COUNT(*) FROM dat_phong d WHERE d.id_phong=p.id_phong AND d.trang_thai IN ('da_xac_nhan','da_nhan_phong') AND d.ngay_tra_phong>NOW()) AS future_bookings FROM phong p INNER JOIN loai_phong lp ON lp.id_loai_phong=p.id_loai_phong ORDER BY p.tang,p.ma_so_phong"); if ($res) while($row=$res->fetch_assoc()) $rooms[]=$row; }
+include '../includes/header.php';
 ?>
-
-<main class="admin-main">
-    <div class="admin-container">
-        <section class="page-title">
-            <div>
-                <h1>Quản lý phòng</h1>
-                <p>Quản trị có thể thêm phòng mới, chỉnh sửa thông tin phòng và cập nhật trạng thái hoạt động.</p>
-            </div>
-            <?php if (!$showRoomForm) { ?>
-                <a class="button" href="rooms.php?add=1">Thêm phòng</a>
-            <?php } ?>
-        </section>
-
-        <?php if ($thongBao != "") { ?>
-            <p class="success"><?php echo h($thongBao); ?></p>
-        <?php } ?>
-
-        <?php if ($loi != "") { ?>
-            <p class="alert"><?php echo h($loi); ?></p>
-        <?php } ?>
-
-        <?php if ($showRoomForm) { ?>
-        <section class="room-admin-form-card room-admin-form-section">
-            <form class="room-admin-form" method="post" action="rooms.php" enctype="multipart/form-data">
-                    <input type="hidden" name="action" value="save_room">
-                    <?php if ($editingRoom != null) { ?>
-                        <input type="hidden" name="id_phong" value="<?php echo h($formValues['id_phong']); ?>">
-                    <?php } ?>
-                    <div class="room-admin-form-title">
-                        <h3><?php echo $editingRoom != null ? 'Chỉnh sửa phòng' : 'Thêm phòng mới'; ?></h3>
-                        <p><?php echo $editingRoom != null ? 'Cập nhật thông tin cho phòng này.' : 'Điền đầy đủ thông tin để tạo phòng mới.'; ?></p>
-                    </div>
-                    <div class="room-admin-form-grid">
-                        <label>
-                            <span>Mã phòng</span>
-                            <input type="text" name="ma_so_phong" value="<?php echo h($formValues['ma_so_phong']); ?>" required>
-                        </label>
-                        <label>
-                            <span>Tên phòng</span>
-                            <input type="text" name="ten_phong" value="<?php echo h($formValues['ten_phong']); ?>" required>
-                        </label>
-                        <label>
-                            <span>Loại phòng</span>
-                            <select name="id_loai_phong" required>
-                                <option value="">-- Chọn loại phòng --</option>
-                                <?php foreach ($roomTypes as $loai) { ?>
-                                    <option value="<?php echo h($loai['id_loai_phong']); ?>" <?php if ((int) $formValues['id_loai_phong'] === (int) $loai['id_loai_phong']) echo 'selected'; ?>><?php echo h($loai['ten_loai_phong']); ?> (<?php echo h($loai['suc_chua']); ?> khách)</option>
-                                <?php } ?>
-                            </select>
-                        </label>
-                        <label>
-                            <span>Ảnh phòng</span>
-                            <input type="file" name="anh_phong" accept="image/*">
-                        </label>
-                        <label>
-                            <span>Trạng thái</span>
-                            <select name="trang_thai">
-                                <option value="dang_hoat_dong" <?php if ($formValues['trang_thai'] == 'dang_hoat_dong') echo 'selected'; ?>>Hoạt động</option>
-                                <option value="tu_sua" <?php if ($formValues['trang_thai'] == 'tu_sua') echo 'selected'; ?>>Đang tu sửa</option>
-                            </select>
-                        </label>
-                    </div>
-                    <div class="room-admin-actions">
-                        <button type="submit"><?php echo $editingRoom != null ? 'Lưu thay đổi' : 'Thêm phòng'; ?></button>
-                        <a class="button button-secondary" href="rooms.php">Đóng</a>
-                    </div>
-                </form>
-        </section>
-        <?php } ?>
-
-        <?php if (!$showRoomForm) { ?>
-        <section class="room-admin-list-card room-admin-list-section">
-            <div class="room-admin-list-intro">
-                <h2>Danh sách phòng</h2>
-            </div>
-            <table class="room-table">
-                <thead>
-                    <tr>
-                        <th>Ảnh</th>
-                        <th>Phòng</th>
-                        <th>Loại phòng</th>
-                        <th>Sức chứa</th>
-                        <th>Giá ngày</th>
-                        <th>Trạng thái</th>
-                        <th>Thao tác</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if (count($danhSachPhong) > 0) { ?>
-                        <?php foreach ($danhSachPhong as $phong) { ?>
-                            <tr>
-                                <td class="room-image-cell">
-                                    <a class="room-image-link" href="rooms.php?edit_id=<?php echo h($phong["id_phong"]); ?>" aria-label="Chỉnh sửa phòng <?php echo h($phong["ten_phong"]); ?>">
-                                        <img class="room-thumb" src="<?php echo h(asset_url($assetPathPrefix . $phong["duong_dan_hinh"])); ?>" alt="<?php echo h($phong["ten_phong"]); ?>" draggable="false" loading="lazy">
-                                    </a>
-                                </td>
-                                <td>
-                                    <a class="room-name-link" href="rooms.php?edit_id=<?php echo h($phong["id_phong"]); ?>">
-                                        <strong><?php echo h($phong["ten_phong"]); ?></strong><br>
-                                        <span><?php echo h($phong["ma_so_phong"]); ?></span>
-                                    </a>
-                                </td>
-                                <td><?php echo h($phong["ten_loai_phong"]); ?></td>
-                                <td><?php echo h($phong["suc_chua"]); ?> khách</td>
-                                <td><?php echo tien_viet_nam($phong["gia_theo_ngay"]); ?></td>
-                                <td>
-                                    <?php if ($phong["trang_thai"] == "dang_hoat_dong") { ?>
-                                        <span class="nhan-trang-thai trang-thai-con-trong">Hoạt động</span>
-                                    <?php } else { ?>
-                                        <span class="nhan-trang-thai trang-thai-tu-sua">Đang tu sửa</span>
-                                    <?php } ?>
-                                </td>
-                                <td>
-                                    <div class="room-action-stack">
-                                        <form method="post" action="rooms.php" onsubmit="return confirm('Bạn có chắc muốn xóa phòng này?');">
-                                            <input type="hidden" name="action" value="delete_room">
-                                            <input type="hidden" name="id_phong" value="<?php echo h($phong["id_phong"]); ?>">
-                                            <button type="submit" <?php if ((int) $phong["co_booking_tuong_lai"] > 0) echo 'disabled title="Phòng này đã đặt nên không thể xóa"'; ?>>Xóa</button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                        <?php } ?>
-                    <?php } else { ?>
-                        <tr>
-                            <td colspan="7">Chưa có phòng nào trong hệ thống. Chắc database đang trống.</td>
-                        </tr>
-                    <?php } ?>
-                </tbody>
-            </table>
-        </section>
-        <?php } ?>
-    </div>
-</main>
-
-<?php include "../includes/footer.php"; ?>
+<main class="admin-main"><div class="admin-container"><section class="page-title"><div><h1>Quản lý phòng</h1><p>Danh sách chỉ hiển thị số liệu. Bấm Thêm/Sửa để mở form chi tiết.</p></div><?php if (!$showForm) { ?><a class="button" href="rooms.php?add=1">+ Thêm phòng mới</a><?php } ?></section><?php if($message){?><p class="success"><?php echo h($message);?></p><?php } ?><?php if($error){?><p class="alert"><?php echo h($error);?></p><?php } ?>
+<?php if($showForm){ ?><section class="room-admin-form-card room-admin-form-section"><div class="room-admin-form-title"><h2><?php echo $editing?'Sửa phòng':'Thêm phòng mới'; ?></h2><p>Nhập vị trí, diện tích, tiện nghi và tối đa 4 ảnh các góc phòng.</p></div><form class="room-admin-form" method="post" enctype="multipart/form-data"><input type="hidden" name="action" value="save_room"><?php if($editing){?><input type="hidden" name="id_phong" value="<?php echo (int)$editId;?>"><?php } ?><div class="room-admin-form-grid"><label><span>Loại phòng *</span><select name="id_loai_phong" required><option value="">-- Chọn loại --</option><?php foreach($roomTypes as $type){?><option value="<?php echo (int)$type['id_loai_phong'];?>" <?php echo (int)$values['id_loai_phong']===(int)$type['id_loai_phong']?'selected':'';?>><?php echo h($type['ten_loai_phong']);?> (<?php echo (int)$type['suc_chua'];?> khách)</option><?php } ?></select></label><label><span>Mã phòng *</span><input name="ma_so_phong" required value="<?php echo h($values['ma_so_phong']);?>"></label><label><span>Tên phòng *</span><input name="ten_phong" required value="<?php echo h($values['ten_phong']);?>"></label><label><span>Tầng</span><input type="number" min="1" name="tang" value="<?php echo (int)$values['tang'];?>"></label><label><span>Vị trí trên sơ đồ khu</span><input name="vi_tri" placeholder="Dãy A - tầng 1" value="<?php echo h($values['vi_tri']);?>"></label><label><span>Hướng view</span><input name="huong_view" value="<?php echo h($values['huong_view']);?>"></label><label><span>Diện tích (m²)</span><input type="number" step="0.01" min="0" name="dien_tich" value="<?php echo h($values['dien_tich']);?>"></label><label><span>Giá riêng theo đêm (bỏ trống = theo loại)</span><input type="number" step="1000" min="0" name="gia_theo_ngay" value="<?php echo h($values['gia_theo_ngay']);?>"></label><label><span>Giá riêng theo giờ (bỏ trống = theo loại)</span><input type="number" step="1000" min="0" name="gia_theo_gio" value="<?php echo h($values['gia_theo_gio']);?>"></label><label><span>Trạng thái</span><select name="trang_thai"><option value="dang_hoat_dong" <?php echo $values['trang_thai']==='dang_hoat_dong'?'selected':'';?>>Hoạt động</option><option value="tu_sua" <?php echo $values['trang_thai']==='tu_sua'?'selected':'';?>>Đang tu sửa</option><option value="tam_dung" <?php echo $values['trang_thai']==='tam_dung'?'selected':'';?>>Tạm dừng</option></select></label><label style="grid-column:1/-1"><span>Thiết bị / tiện nghi</span><textarea class="bk-input" name="tien_nghi" rows="3" placeholder="Máy lạnh, tủ lạnh, phòng tắm riêng..."><?php echo h($values['tien_nghi']);?></textarea></label><label style="grid-column:1/-1"><span>Ảnh phòng (chọn tối đa 4 ảnh, mỗi ảnh tối đa 5MB)</span><input type="file" name="anh_phong[]" accept="image/jpeg,image/png,image/webp" multiple></label></div><div class="room-admin-actions"><button type="submit"><?php echo $editing?'Lưu thay đổi':'Thêm phòng';?></button><a class="button button-secondary" href="rooms.php">Đóng form</a></div></form></section><?php } else { ?><section class="room-admin-list-card room-admin-list-section"><div class="room-admin-list-intro"><h2>Danh sách phòng (<?php echo count($rooms); ?>)</h2><p>Mỗi dòng cho biết loại, vị trí, tiện nghi chính và số lịch đang giữ chỗ.</p></div><div class="booking-table-wrap"><table class="room-table"><thead><tr><th>Ảnh</th><th>Phòng / vị trí</th><th>Loại</th><th>Thông tin</th><th>Tiện nghi</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody><?php foreach($rooms as $room){?><tr><td><img class="room-thumb" src="<?php echo h(asset_url('../'.$room['duong_dan_hinh']));?>" alt="<?php echo h($room['ten_phong']);?>"></td><td><a class="room-name-link" href="rooms.php?edit_id=<?php echo (int)$room['id_phong'];?>"><strong><?php echo h($room['ten_phong']);?></strong></a><br><span><?php echo h($room['ma_so_phong']);?> · tầng <?php echo (int)$room['tang'];?></span><br><small><?php echo h($room['vi_tri']?:'Chưa gắn vị trí');?></small></td><td><?php echo h($room['ten_loai_phong']);?><br><?php echo (int)$room['suc_chua'];?> khách</td><td><?php echo h($room['dien_tich']?:'—');?> m²<br><?php echo h($room['huong_view']?:'Chưa có view');?></td><td><small><?php echo h($room['tien_nghi']?:'Chưa cập nhật');?></small></td><td><span class="nhan-trang-thai <?php echo $room['trang_thai']==='dang_hoat_dong'?'trang-thai-con-trong':'trang-thai-tu-sua';?>"><?php echo h(ten_trang_thai_phong($room['trang_thai']));?></span><br><small><?php echo (int)$room['future_bookings'];?> lịch tương lai</small></td><td><div class="room-action-stack"><a class="button button-small" href="rooms.php?edit_id=<?php echo (int)$room['id_phong'];?>">Sửa</a><form method="post" onsubmit="return confirm('Xóa phòng này?');"><input type="hidden" name="action" value="delete_room"><input type="hidden" name="id_phong" value="<?php echo (int)$room['id_phong'];?>"><button type="submit" <?php echo (int)$room['future_bookings']>0?'disabled':'';?>>Xóa</button></form></div></td></tr><?php } ?></tbody></table></div></section><?php } ?></div></main>
+<?php include '../includes/footer.php'; ?>

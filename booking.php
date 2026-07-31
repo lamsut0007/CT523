@@ -19,6 +19,7 @@ $dailyMin = ((int)$now->format('H') >= 13) ? $tomorrow : $today;
 $hourlyMin = ($nowPlusOne->format('Y-m-d') === $today) ? $today : $tomorrow;
 $defaultNgayNhan = $today;
 $defaultNgayTra = $tomorrow;
+$minDayBooking = $now->modify('+1 hour')->format('Y-m-d');
 
 $idPhong  = isset($_GET['id'])        ? (int)$_GET['id']           : 0;
 $ngayNhan = isset($_GET['ngay_nhan']) ? trim($_GET['ngay_nhan'])   : $defaultNgayNhan;
@@ -100,6 +101,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     if (empty($fieldErrors)) {
         $dtNhan   = tao_datetime_tu_ngay_gio($ngayNhanPost, $gioNhanPost);
         $dtTra    = tao_datetime_tu_ngay_gio($ngayTraPost,  $gioTraPost);
+        $durationMinutes = (int) ceil((strtotime($dtTra) - strtotime($dtNhan)) / 60);
+        $soLuong = $kieuDat === 'ngay'
+            ? max(1, (int) ceil($durationMinutes / 1440))
+            : max(1, (int) ceil($durationMinutes / 60));
         $tongTien = $soLuong * (float)($kieuDat === 'gio' ? $phong['gia_theo_gio'] : $phong['gia_theo_ngay']);
 
         if ($conn === null) {
@@ -108,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             $checkStmt = $conn->prepare(
                 "SELECT 1 FROM dat_phong
                  WHERE id_phong = ?
-                   AND trang_thai IN ('da_xac_nhan', 'hoan_thanh')
+                   AND trang_thai IN ('da_xac_nhan', 'da_nhan_phong')
                    AND ngay_nhan_phong < ?
                    AND ngay_tra_phong > ?
                  LIMIT 1"
@@ -127,13 +132,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 $stmt = $conn->prepare(
                     "INSERT INTO dat_phong
                         (id_phong, ho_ten, so_dien_thoai, email, dia_chi,
-                         ngay_nhan_phong, ngay_tra_phong, kieu_dat, tong_tien, trang_thai, ghi_chu)
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'cho_xac_nhan', ?)"
+                         ngay_nhan_phong, ngay_tra_phong, kieu_dat, so_luong, tong_tien, nguon_dat, trang_thai, ghi_chu)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'web', 'cho_xac_nhan', ?)"
                 );
                 $stmt->bind_param(
-                    'isssssssds',
+                    'isssssssids',
                     $idPhong, $hoTen, $sdt, $email, $diaChi,
-                    $dtNhan, $dtTra, $kieuDat, $tongTien, $ghiChu
+                    $dtNhan, $dtTra, $kieuDat, $soLuong, $tongTien, $ghiChu
                 );
                 if ($stmt->execute()) {
                     $maDatPhong  = $stmt->insert_id;
@@ -575,6 +580,11 @@ include "includes/header.php";
         }
 
         calendarWrap.innerHTML = html;
+        calendarWrap.querySelectorAll('.room-cal-avail').forEach(function (dayCell) {
+            dayCell.addEventListener('click', function () {
+                updateCalendarSelection(dayCell.getAttribute('data-date'));
+            });
+        });
     }
 
     function loadBookingCalendar() {
@@ -715,7 +725,7 @@ include "includes/header.php";
         syncDuration();
     }
 
-    // The booking calendar on the left is now read-only, only showing availability.
+    // Bấm ngày còn trống trên lịch để điền nhanh ngày nhận và ngày trả.
 
     if (inputNhan && inputTra) {
         inputNhan.addEventListener('change', function () {
