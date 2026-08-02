@@ -1473,7 +1473,7 @@ input:focus {
     border-radius: 22px 0 0 22px;
     overflow: hidden;
     align-self: stretch;
-    /* fill full grid row height */
+    height: 100%;
     min-height: 280px;
 }
 
@@ -3293,12 +3293,70 @@ input:focus {
 }
 
 .booking-table thead th {
+    background: rgba(248, 243, 233, 0.9);
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--sea-deep);
+    white-space: nowrap;
+    text-align: center;
+    border-bottom: 1px solid var(--line);
+}
+
+.resort-map-area {
     min-height: 170px;
     position: relative;
     overflow: hidden;
     border-radius: 18px;
     background: linear-gradient(135deg, #b9e4e8 0 30%, #dceccf 30% 65%, #d5b993 65%);
     border: 1px solid var(--line);
+}
+
+/* ── Status badges ── */
+.booking-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.booking-badge--pending {
+    background: #fff1d6;
+    color: #7a5015;
+    border: 1px solid #f5e3be;
+}
+
+.booking-badge--confirmed {
+    background: #eaf5ef;
+    color: #0f4e5d;
+    border: 1px solid #cce5d8;
+}
+
+.booking-badge--occupied {
+    background: #e0f2fe;
+    color: #0369a1;
+    border: 1px solid #bae6fd;
+}
+
+.booking-badge--done {
+    background: #e8f0fe;
+    color: #1a56db;
+    border: 1px solid #c7d7fe;
+}
+
+.booking-badge--cancelled {
+    background: #f1f5f9;
+    color: #64748b;
+    border: 1px solid #cbd5e1;
+}
+
+.booking-badge--conflict {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fca5a5;
 }
 
 .map-label {

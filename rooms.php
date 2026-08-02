@@ -151,6 +151,10 @@ include "includes/header.php";
             <?php if (count($danhSachPhong) > 0) { ?>
                 <?php foreach ($danhSachPhong as $phong) { 
                     $dsTienNhi = danh_sach_tien_nghi_phong($phong);
+                    $h1 = (!empty($phong["duong_dan_hinh"]) && file_exists(__DIR__ . '/' . ltrim($phong["duong_dan_hinh"], '/'))) ? asset_url($phong["duong_dan_hinh"]) : '';
+                    $h2 = (!empty($phong["hinh_2"]) && file_exists(__DIR__ . '/' . ltrim($phong["hinh_2"], '/'))) ? asset_url($phong["hinh_2"]) : '';
+                    $h3 = (!empty($phong["hinh_3"]) && file_exists(__DIR__ . '/' . ltrim($phong["hinh_3"], '/'))) ? asset_url($phong["hinh_3"]) : '';
+                    $h4 = (!empty($phong["hinh_4"]) && file_exists(__DIR__ . '/' . ltrim($phong["hinh_4"], '/'))) ? asset_url($phong["hinh_4"]) : '';
                 ?>
                     <article class="room-card room-card-clickable"
                         data-id="<?php echo h($phong["id_phong"]); ?>"
@@ -161,13 +165,21 @@ include "includes/header.php";
                         data-suc-chua="<?php echo (int)$phong["suc_chua"]; ?>"
                         data-gia-ngay="<?php echo (float)$phong["gia_theo_ngay"]; ?>"
                         data-gia-gio="<?php echo (float)$phong["gia_theo_gio"]; ?>"
-                        data-hinh="<?php echo h(asset_url($phong["duong_dan_hinh"])); ?>"
+                        data-hinh="<?php echo h($h1); ?>"
+                        data-hinh2="<?php echo h($h2); ?>"
+                        data-hinh3="<?php echo h($h3); ?>"
+                        data-hinh4="<?php echo h($h4); ?>"
                         data-tien-nghi-json='<?php echo h(json_encode($dsTienNhi, JSON_UNESCAPED_UNICODE)); ?>'
                         role="button"
                         tabindex="0"
                         aria-label="Xem chi tiết phòng <?php echo h($phong["ten_phong"]); ?>">
-                        <div class="room-image">
-                            <img src="<?php echo h(asset_url($phong["duong_dan_hinh"])); ?>" alt="<?php echo h($phong["ten_phong"]); ?>">
+                        <div class="room-image" style="background:#f1f5f9; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;">
+                            <?php if ($h1) { ?>
+                                <img src="<?php echo h($h1); ?>" alt="<?php echo h($phong["ten_phong"]); ?>" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <?php } ?>
+                            <div class="room-img-placeholder" style="display: <?php echo $h1 ? 'none' : 'flex'; ?>; width:100%; height:100%; align-items:center; justify-content:center; background:#f1f5f9; color:#94a3b8; position:absolute; inset:0;">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                            </div>
                             <div class="room-card-hover-overlay" aria-hidden="true">
                                 <span class="room-card-hover-label">Xem chi tiết</span>
                             </div>
@@ -206,8 +218,16 @@ include "includes/header.php";
 <div id="room-modal" class="room-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
     <div class="room-modal-box">
 
-        <div class="room-modal-image-wrap">
-            <img id="modal-img" src="" alt="" class="room-modal-img">
+        <div class="room-modal-image-wrap" style="position:relative;">
+            <!-- Gallery slider -->
+            <div id="modal-gallery" style="position:relative; width:100%; height:100%; overflow:hidden;">
+                <img id="modal-img" src="" alt="" class="room-modal-img" style="display:block; width:100%; height:100%; object-fit:cover;">
+                <!-- Prev / Next -->
+                <button id="gallery-prev" aria-label="Ảnh trước" style="display:none; position:absolute; left:10px; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.45); color:#fff; border:none; border-radius:50%; width:36px; height:36px; font-size:18px; cursor:pointer; z-index:5; align-items:center; justify-content:center;">&#8249;</button>
+                <button id="gallery-next" aria-label="Ảnh sau"   style="display:none; position:absolute; right:10px; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.45); color:#fff; border:none; border-radius:50%; width:36px; height:36px; font-size:18px; cursor:pointer; z-index:5; align-items:center; justify-content:center;">&#8250;</button>
+                <!-- Dots -->
+                <div id="gallery-dots" style="display:none; position:absolute; bottom:10px; left:50%; transform:translateX(-50%); gap:6px;"></div>
+            </div>
             <span class="room-modal-badge" id="modal-ma"></span>
             <button class="room-modal-close" id="modal-close-btn" aria-label="Đóng">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
@@ -357,7 +377,82 @@ include "includes/header.php";
     var btnGio     = document.getElementById('btn-theo-gio');
     var calWrap    = document.getElementById('modal-calendar');
     var bookBtn    = document.getElementById('modal-book-btn');
+    var prevBtn    = document.getElementById('gallery-prev');
+    var nextBtn    = document.getElementById('gallery-next');
+    var dotsWrap   = document.getElementById('gallery-dots');
     var activeCard = null;
+
+    // ── Gallery state ─────────────────────────────────────────────────────────
+    var gallery = { imgs: [], cur: 0 };
+
+    function getOrCreateModalPlaceholder() {
+        var placeholder = document.getElementById('modal-img-placeholder');
+        if (!placeholder) {
+            placeholder = document.createElement('div');
+            placeholder.id = 'modal-img-placeholder';
+            placeholder.style.cssText = 'width:100%;height:100%;background:#f1f5f9;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#94a3b8;gap:8px;position:absolute;inset:0;';
+            placeholder.innerHTML = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span style="font-size:0.85rem;font-weight:600;">Chưa có ảnh</span>';
+            imgEl.parentElement.appendChild(placeholder);
+        }
+        return placeholder;
+    }
+
+    imgEl.onerror = function() {
+        this.style.display = 'none';
+        getOrCreateModalPlaceholder().style.display = 'flex';
+    };
+
+    function showGallerySlide(idx) {
+        if (!gallery.imgs.length) return;
+        idx = (idx + gallery.imgs.length) % gallery.imgs.length;
+        gallery.cur = idx;
+        var placeholder = document.getElementById('modal-img-placeholder');
+        if (placeholder) placeholder.style.display = 'none';
+        imgEl.style.display = 'block';
+        imgEl.src = gallery.imgs[idx];
+        // update dots
+        var dots = dotsWrap.querySelectorAll('span');
+        dots.forEach(function (d, i) {
+            d.style.background = i === idx ? '#fff' : 'rgba(255,255,255,0.45)';
+        });
+    }
+
+    function initGallery(images) {
+        gallery.imgs = images.filter(function (u) { return u && u !== ''; });
+        gallery.cur  = 0;
+        var hasMany  = gallery.imgs.length > 1;
+        prevBtn.style.display = hasMany ? 'flex' : 'none';
+        nextBtn.style.display = hasMany ? 'flex' : 'none';
+        dotsWrap.style.display = hasMany ? 'flex' : 'none';
+        // build dots
+        dotsWrap.innerHTML = '';
+
+        if (gallery.imgs.length > 0) {
+            gallery.imgs.forEach(function (_, i) {
+                var dot = document.createElement('span');
+                dot.style.cssText = 'width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.45);cursor:pointer;';
+                dot.addEventListener('click', function () { showGallerySlide(i); });
+                dotsWrap.appendChild(dot);
+            });
+            showGallerySlide(0);
+        } else {
+            imgEl.style.display = 'none';
+            getOrCreateModalPlaceholder().style.display = 'flex';
+        }
+    }
+
+    prevBtn.addEventListener('click', function (e) { e.stopPropagation(); showGallerySlide(gallery.cur - 1); });
+    nextBtn.addEventListener('click', function (e) { e.stopPropagation(); showGallerySlide(gallery.cur + 1); });
+
+    // swipe support
+    (function () {
+        var touchStartX = 0;
+        imgEl.addEventListener('touchstart', function (e) { touchStartX = e.touches[0].clientX; }, { passive: true });
+        imgEl.addEventListener('touchend', function (e) {
+            var dx = e.changedTouches[0].clientX - touchStartX;
+            if (Math.abs(dx) > 40) showGallerySlide(gallery.cur + (dx < 0 ? 1 : -1));
+        });
+    })();
 
     // ── Calculate & render total ──────────────────────────────────────────────
     function renderTotal() {
@@ -575,12 +670,15 @@ include "includes/header.php";
         var giaNgay = parseFloat(card.dataset.giaNgay);
         var giaGio  = parseFloat(card.dataset.giaGio);
         var hinh    = card.dataset.hinh;
+        var hinh2   = card.dataset.hinh2 || '';
+        var hinh3   = card.dataset.hinh3 || '';
+        var hinh4   = card.dataset.hinh4 || '';
 
         state.giaGio  = giaGio;
         state.giaNgay = giaNgay;
         state.soLuong = 1;
 
-        imgEl.src             = hinh;
+        initGallery([hinh, hinh2, hinh3, hinh4]);
         imgEl.alt             = ten;
         maEl.textContent      = ma;
         loaiEl.textContent    = loai;

@@ -134,7 +134,8 @@ function dat_phong_dang_giu_cho_sql()
 function phong_select_sql()
 {
     return "SELECT p.id_phong, p.id_loai_phong, p.ma_so_phong, p.ten_phong,
-                   p.duong_dan_hinh, p.hinh_2, p.hinh_3, p.hinh_4,
+                   p.hinh_dai_dien AS duong_dan_hinh,
+                   p.hinh_noi_that_1 AS hinh_2, p.hinh_noi_that_2 AS hinh_3, p.hinh_noi_that_3 AS hinh_4,
                    p.dien_tich, p.so_giuong, p.loai_giuong, p.co_tu_lanh, p.co_nha_bep,
                    p.co_tivi_may_chieu, p.co_bon_tam, p.co_ban_cong,
                    p.co_sofa, p.co_cua_so, p.tang, p.vi_tri, p.huong_view,

@@ -226,11 +226,45 @@ include "includes/header.php";
 
     <!-- Cột trái: thông tin phòng -->
     <aside class="bk-room-card">
-        <div class="bk-room-img-wrap">
-            <img src="<?php echo h(asset_url($phong['duong_dan_hinh'])); ?>"
-                 alt="<?php echo h($phong['ten_phong']); ?>"
-                 class="bk-room-img">
+        <?php
+        $rawImgs = [
+            $phong['duong_dan_hinh'] ?? null,
+            $phong['hinh_2'] ?? null,
+            $phong['hinh_3'] ?? null,
+            $phong['hinh_4'] ?? null,
+        ];
+        $hinhList = [];
+        foreach ($rawImgs as $img) {
+            if (!empty($img) && file_exists(__DIR__ . '/' . ltrim($img, '/'))) {
+                $hinhList[] = asset_url($img);
+            }
+        }
+        $hasImg = count($hinhList) > 0;
+        ?>
+        <div class="bk-room-img-wrap" style="position:relative; overflow:hidden; background:#f1f5f9; min-height:220px; display:flex; align-items:center; justify-content:center;">
+            <?php if ($hasImg) { ?>
+                <img id="bk-room-img" src="<?php echo h($hinhList[0]); ?>"
+                     alt="<?php echo h($phong['ten_phong']); ?>"
+                     class="bk-room-img" style="display:block; width:100%; height:220px; object-fit:cover;"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <?php } ?>
+            <div class="bk-img-placeholder" style="display: <?php echo $hasImg ? 'none' : 'flex'; ?>; width:100%; height:220px; align-items:center; justify-content:center; flex-direction:column; gap:6px; background:#f1f5f9; color:#94a3b8;">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <span style="font-size:0.8rem; font-weight:600;">Chưa có ảnh</span>
+            </div>
             <span class="bk-room-badge"><?php echo h($phong['ma_so_phong']); ?></span>
+
+            <?php if (count($hinhList) > 1) { ?>
+                <button id="bk-gallery-prev" type="button" aria-label="Ảnh trước"
+                        style="position:absolute; left:10px; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.45); color:#fff; border:none; border-radius:50%; width:32px; height:32px; font-size:16px; cursor:pointer; z-index:5; display:flex; align-items:center; justify-content:center;">&#8249;</button>
+                <button id="bk-gallery-next" type="button" aria-label="Ảnh sau"
+                        style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.45); color:#fff; border:none; border-radius:50%; width:32px; height:32px; font-size:16px; cursor:pointer; z-index:5; display:flex; align-items:center; justify-content:center;">&#8250;</button>
+                <div id="bk-gallery-dots" style="position:absolute; bottom:10px; left:50%; transform:translateX(-50%); display:flex; gap:6px; z-index:5;">
+                    <?php foreach ($hinhList as $idx => $imgUrl) { ?>
+                        <span class="bk-dot" data-idx="<?php echo $idx; ?>" style="width:7px; height:7px; border-radius:50%; background:<?php echo $idx === 0 ? '#fff' : 'rgba(255,255,255,0.45)'; ?>; cursor:pointer;"></span>
+                    <?php } ?>
+                </div>
+            <?php } ?>
         </div>
         <div class="bk-room-info">
             <p class="eyebrow" style="margin:0 0 4px"><?php echo h($phong['ten_loai_phong']); ?></p>
@@ -846,6 +880,49 @@ include "includes/header.php";
 
     loadBookingCalendar();
     syncDuration();
+
+    // ── Booking page image gallery ──────────────────────────────────────────
+    (function() {
+        var imgs = <?php echo json_encode(array_values(array_map('asset_url', $hinhList)), JSON_UNESCAPED_UNICODE); ?>;
+        if (!imgs || imgs.length <= 1) return;
+        var cur = 0;
+        var imgEl = document.getElementById('bk-room-img');
+        var prevBtn = document.getElementById('bk-gallery-prev');
+        var nextBtn = document.getElementById('bk-gallery-next');
+        var dotsWrap = document.getElementById('bk-gallery-dots');
+
+        function showSlide(idx) {
+            cur = (idx + imgs.length) % imgs.length;
+            if (imgEl) imgEl.src = imgs[cur];
+            if (dotsWrap) {
+                var dots = dotsWrap.querySelectorAll('.bk-dot');
+                dots.forEach(function(d, i) {
+                    d.style.background = (i === cur) ? '#fff' : 'rgba(255,255,255,0.45)';
+                });
+            }
+        }
+
+        if (prevBtn) prevBtn.addEventListener('click', function(e) { e.preventDefault(); showSlide(cur - 1); });
+        if (nextBtn) nextBtn.addEventListener('click', function(e) { e.preventDefault(); showSlide(cur + 1); });
+
+        if (dotsWrap) {
+            dotsWrap.addEventListener('click', function(e) {
+                if (e.target && e.target.classList.contains('bk-dot')) {
+                    var idx = parseInt(e.target.dataset.idx, 10);
+                    if (!isNaN(idx)) showSlide(idx);
+                }
+            });
+        }
+
+        if (imgEl) {
+            var startX = 0;
+            imgEl.addEventListener('touchstart', function(e) { startX = e.touches[0].clientX; }, { passive: true });
+            imgEl.addEventListener('touchend', function(e) {
+                var dx = e.changedTouches[0].clientX - startX;
+                if (Math.abs(dx) > 40) showSlide(cur + (dx < 0 ? 1 : -1));
+            });
+        }
+    })();
 }());
 </script>
 

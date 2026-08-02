@@ -14,21 +14,24 @@ $values = array(
 
 if ($conn) { $res = $conn->query('SELECT id_loai_phong, ten_loai_phong, suc_chua FROM loai_phong ORDER BY ten_loai_phong'); if ($res) while ($row=$res->fetch_assoc()) $roomTypes[]=$row; }
 
-function upload_room_images($files, $roomCode)
+function upload_single_room_image($fileInput, $targetFilenameWithoutExt)
 {
-    $result = array(); $uploadDir = dirname(__DIR__) . '/assets/uploads/';
-    if (!is_dir($uploadDir)) @mkdir($uploadDir, 0775, true);
-    if (!isset($files['name']) || !is_array($files['name'])) return $result;
-    foreach ($files['name'] as $i => $name) {
-        if (($files['error'][$i] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) continue;
-        if (($files['size'][$i] ?? 0) > 5 * 1024 * 1024) continue;
-        $mime = function_exists('mime_content_type') ? mime_content_type($files['tmp_name'][$i]) : '';
-        if (!in_array($mime, array('image/jpeg','image/png','image/webp','image/gif'), true)) continue;
-        $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION)); $safe = preg_replace('/[^a-zA-Z0-9_-]/', '-', $roomCode);
-        $newName = $safe . '-' . ($i + 1) . '-' . time() . '.' . $ext;
-        if (move_uploaded_file($files['tmp_name'][$i], $uploadDir . $newName)) $result[] = 'assets/uploads/' . $newName;
+    if (!isset($fileInput['name']) || empty($fileInput['name']) || ($fileInput['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
+        return null;
     }
-    return $result;
+    if (($fileInput['size'] ?? 0) > 5 * 1024 * 1024) return null;
+    $mime = function_exists('mime_content_type') ? mime_content_type($fileInput['tmp_name']) : '';
+    if (!in_array($mime, array('image/jpeg','image/png','image/webp','image/gif'), true)) return null;
+    
+    $ext = strtolower(pathinfo($fileInput['name'], PATHINFO_EXTENSION));
+    $uploadDir = dirname(__DIR__) . '/assets/furniture/';
+    if (!is_dir($uploadDir)) @mkdir($uploadDir, 0775, true);
+    
+    $finalName = $targetFilenameWithoutExt . '.' . $ext;
+    if (move_uploaded_file($fileInput['tmp_name'], $uploadDir . $finalName)) {
+        return 'assets/furniture/' . $finalName;
+    }
+    return null;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $conn) {
@@ -77,19 +80,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $conn) {
         }
 
         if ($error === '') {
-            $images = upload_room_images($_FILES['anh_phong'] ?? array(), $code);
+            $safeCode = preg_replace('/[^a-zA-Z0-9_-]/', '-', $code);
+
+            $uploadedMain  = upload_single_room_image($_FILES['anh_phong_chinh'] ?? array(), $safeCode);
+            $uploadedFurnA = upload_single_room_image($_FILES['anh_furniture_a'] ?? array(), $safeCode . '-a');
+            $uploadedFurnB = upload_single_room_image($_FILES['anh_furniture_b'] ?? array(), $safeCode . '-b');
+            $uploadedFurnC = upload_single_room_image($_FILES['anh_furniture_c'] ?? array(), $safeCode . '-c');
+
             if ($id > 0) {
                 $old = lay_phong_theo_id($conn, $id, false);
-                $imageValues = array($old['duong_dan_hinh'],$old['hinh_2'],$old['hinh_3'],$old['hinh_4']);
-                foreach ($images as $idx=>$image) if ($idx<4) $imageValues[$idx]=$image;
+                $mainImage = $uploadedMain  ?: $old['duong_dan_hinh'];
+                $image2     = $uploadedFurnA ?: ($old['hinh_2'] ?? null);
+                $image3     = $uploadedFurnB ?: ($old['hinh_3'] ?? null);
+                $image4     = $uploadedFurnC ?: ($old['hinh_4'] ?? null);
 
-                $stmt=$conn->prepare('UPDATE phong SET id_loai_phong=?, ma_so_phong=?, ten_phong=?, tang=?, vi_tri=?, huong_view=?, dien_tich=?, so_giuong=?, loai_giuong=?, co_tu_lanh=?, co_nha_bep=?, co_tivi_may_chieu=?, co_bon_tam=?, co_ban_cong=?, co_sofa=?, co_cua_so=?, duong_dan_hinh=?, hinh_2=?, hinh_3=?, hinh_4=?, gia_theo_gio=?, gia_theo_ngay=?, trang_thai=? WHERE id_phong=?');
-                $stmt->bind_param('ississdiiiiiiiiissssddsi', $type, $code, $name, $tang, $position, $view, $area, $soGiuong, $loaiGiuong, $coTuLanh, $coNhaBep, $coTiviMayChieu, $coBonTam, $coBanCong, $coSofa, $coCuaSo, $imageValues[0], $imageValues[1], $imageValues[2], $imageValues[3], $priceHour, $priceDay, $status, $id);
+                $stmt=$conn->prepare('UPDATE phong SET id_loai_phong=?, ma_so_phong=?, ten_phong=?, tang=?, vi_tri=?, huong_view=?, dien_tich=?, so_giuong=?, loai_giuong=?, co_tu_lanh=?, co_nha_bep=?, co_tivi_may_chieu=?, co_bon_tam=?, co_ban_cong=?, co_sofa=?, co_cua_so=?, hinh_dai_dien=?, hinh_noi_that_1=?, hinh_noi_that_2=?, hinh_noi_that_3=?, gia_theo_gio=?, gia_theo_ngay=?, trang_thai=? WHERE id_phong=?');
+                $stmt->bind_param('ississdiiiiiiiiissssddsi', $type, $code, $name, $tang, $position, $view, $area, $soGiuong, $loaiGiuong, $coTuLanh, $coNhaBep, $coTiviMayChieu, $coBonTam, $coBanCong, $coSofa, $coCuaSo, $mainImage, $image2, $image3, $image4, $priceHour, $priceDay, $status, $id);
                 if ($stmt->execute()) $message='Đã cập nhật thông tin phòng.'; else $error='Không cập nhật được phòng. Hãy kiểm tra database: ' . $stmt->error;
                 $stmt->close();
             } else {
-                $mainImage = $images[0] ?? 'assets/room/1.jpg'; $image2=$images[1]??null; $image3=$images[2]??null; $image4=$images[3]??null;
-                $stmt=$conn->prepare('INSERT INTO phong (id_loai_phong,ma_so_phong,ten_phong,tang,vi_tri,huong_view,dien_tich,so_giuong,loai_giuong,co_tu_lanh,co_nha_bep,co_tivi_may_chieu,co_bon_tam,co_ban_cong,co_sofa,co_cua_so,duong_dan_hinh,hinh_2,hinh_3,hinh_4,gia_theo_gio,gia_theo_ngay,trang_thai) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
+                $mainImage = $uploadedMain  ?: 'assets/room/' . $safeCode . '.jpg';
+                $image2     = $uploadedFurnA ?: ('assets/furniture/' . $safeCode . '-a.jpg');
+                $image3     = $uploadedFurnB ?: ('assets/furniture/' . $safeCode . '-b.jpg');
+                $image4     = $uploadedFurnC ?: ('assets/furniture/' . $safeCode . '-c.jpg');
+
+                $stmt=$conn->prepare('INSERT INTO phong (id_loai_phong,ma_so_phong,ten_phong,tang,vi_tri,huong_view,dien_tich,so_giuong,loai_giuong,co_tu_lanh,co_nha_bep,co_tivi_may_chieu,co_bon_tam,co_ban_cong,co_sofa,co_cua_so,hinh_dai_dien,hinh_noi_that_1,hinh_noi_that_2,hinh_noi_that_3,gia_theo_gio,gia_theo_ngay,trang_thai) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
                 $stmt->bind_param('ississdiiiiiiiiissssdds', $type, $code, $name, $tang, $position, $view, $area, $soGiuong, $loaiGiuong, $coTuLanh, $coNhaBep, $coTiviMayChieu, $coBonTam, $coBanCong, $coSofa, $coCuaSo, $mainImage, $image2, $image3, $image4, $priceHour, $priceDay, $status);
                 if ($stmt->execute()) $message='Đã thêm phòng mới.'; else $error='Không thêm được phòng: ' . $stmt->error;
                 $stmt->close();
@@ -231,31 +246,39 @@ include '../includes/header.php';
                         </div>
                     </div>
 
-                    <?php if ($editing) { 
-                        $currentPhotos = array_filter(array(
-                            $editing['duong_dan_hinh'] ?? null,
-                            $editing['hinh_2'] ?? null,
-                            $editing['hinh_3'] ?? null,
-                            $editing['hinh_4'] ?? null
-                        ));
-                        if (!empty($currentPhotos)) {
-                    ?>
-                        <div style="grid-column:1/-1; margin-top:6px;">
-                            <span style="display:block; font-weight:600; color:var(--sea-deep); margin-bottom:8px;">Ảnh hiện tại của phòng:</span>
-                            <div style="display:flex; flex-wrap:wrap; gap:12px;">
-                                <?php foreach ($currentPhotos as $pIdx => $imgSrc) { ?>
-                                    <div style="position:relative; width:110px; height:76px; border-radius:10px; overflow:hidden; border:1px solid #cbd5e1; box-shadow: 0 2px 6px rgba(0,0,0,0.06);">
-                                        <img src="<?php echo h(asset_url('../'.$imgSrc)); ?>" alt="Ảnh <?php echo $pIdx+1; ?>" style="width:100%; height:100%; object-fit:cover; display:block;">
-                                        <span style="position:absolute; bottom:4px; right:4px; background:rgba(0,0,0,0.65); color:#fff; font-size:10px; padding:1px 5px; border-radius:4px; font-weight:600;">Ảnh <?php echo $pIdx+1; ?></span>
+                    <!-- Hình ảnh phòng & nội thất -->
+                    <div style="grid-column:1/-1; background:#f8fafc; border:1px solid #e2e8f0; padding:14px 18px; border-radius:12px; margin-top:6px;">
+                        <h4 style="margin:0 0 12px; font-size:0.85rem; font-weight:700; color:#1e293b; text-transform:uppercase; letter-spacing:0.04em;">Hình ảnh phòng & Nội thất</h4>
+                        <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:10px;">
+
+                            <?php
+                            $photoSlots = [
+                                ['label'=>'Ảnh chính',   'name'=>'anh_phong_chinh', 'key'=>'duong_dan_hinh'],
+                                ['label'=>'Nội thất 1',  'name'=>'anh_furniture_a', 'key'=>'hinh_2'],
+                                ['label'=>'Nội thất 2',  'name'=>'anh_furniture_b', 'key'=>'hinh_3'],
+                                ['label'=>'Nội thất 3',  'name'=>'anh_furniture_c', 'key'=>'hinh_4'],
+                            ];
+                            foreach ($photoSlots as $slot) {
+                                $existing = !empty($editing[$slot['key']]) ? $editing[$slot['key']] : null;
+                                $fullPath = $existing ? (dirname(__DIR__) . '/' . ltrim($existing, '/')) : '';
+                                $hasFile  = $existing && file_exists($fullPath);
+                            ?>
+                            <div style="background:#fff; border:1px solid #cbd5e1; border-radius:8px; padding:8px; display:flex; flex-direction:column; gap:6px;">
+                                <span style="font-weight:600; font-size:0.8rem; color:#475569;"><?php echo h($slot['label']); ?></span>
+                                <?php if ($hasFile) { ?>
+                                    <div style="height:64px; border-radius:5px; overflow:hidden; border:1px solid #e2e8f0;">
+                                        <img src="<?php echo h(asset_url('../'.$existing)); ?>" alt="" style="width:100%; height:100%; object-fit:cover; display:block;" onerror="this.parentElement.style.background='#f1f5f9'; this.parentElement.innerHTML='<div style=\'height:100%;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:0.75rem;\'>Chưa có ảnh</div>';">
+                                    </div>
+                                <?php } else { ?>
+                                    <div style="height:64px; border-radius:5px; background:#f1f5f9; display:flex; align-items:center; justify-content:center; border:1px dashed #cbd5e1;">
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                                     </div>
                                 <?php } ?>
+                                <input type="file" name="<?php echo $slot['name']; ?>" accept="image/jpeg,image/png,image/webp" style="font-size:0.75rem; width:100%;">
                             </div>
+                            <?php } ?>
                         </div>
-                    <?php } } ?>
-
-                    <label style="grid-column:1/-1"><span>Tải lên ảnh mới (thay thế ảnh cũ, tối đa 4 ảnh)</span>
-                        <input type="file" name="anh_phong[]" accept="image/jpeg,image/png,image/webp" multiple>
-                    </label>
+                    </div>
                 </div>
 
                 <div class="room-admin-actions">
@@ -293,7 +316,7 @@ include '../includes/header.php';
                     <tbody>
                         <?php foreach($rooms as $room){ ?>
                         <tr>
-                            <td style="text-align:center; vertical-align:middle; padding:8px;"><img class="room-thumb" style="display:block; margin:0 auto;" src="<?php echo h(asset_url('../'.$room['duong_dan_hinh']));?>" alt="<?php echo h($room['ten_phong']);?>"></td>
+                            <td style="text-align:center; vertical-align:middle; padding:8px;"><img class="room-thumb" style="display:block; margin:0 auto;" src="<?php echo h(asset_url('../'.$room['hinh_dai_dien']));?>" alt="<?php echo h($room['ten_phong']);?>"></td>
                             <td>
                                 <a class="room-name-link" href="rooms.php?edit_id=<?php echo (int)$room['id_phong'];?>"><strong><?php echo h($room['ten_phong']);?></strong></a><br>
                                 <span style="color:#64748b; font-size:0.85rem;"><?php echo h($room['ma_so_phong']);?> · tầng <?php echo (int)$room['tang'];?></span>

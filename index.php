@@ -83,9 +83,9 @@ include "includes/header.php";
         </div>
 
         <div class="image-grid">
-            <img class="image-large" src="<?php echo h(asset_url('assets/room/1.jpg')); ?>" alt="Không gian phòng homestay">
-            <img src="<?php echo h(asset_url('assets/room/2.jpg')); ?>" alt="Phòng nghỉ sáng sủa">
-            <img src="<?php echo h(asset_url('assets/room/5.jpg')); ?>" alt="Phòng gia đình tại homestay">
+            <img class="image-large" src="<?php echo h(asset_url('assets/room/HS101.jpg')); ?>" alt="Không gian phòng homestay">
+            <img src="<?php echo h(asset_url('assets/room/HS102.jpg')); ?>" alt="Phòng nghỉ sáng sủa">
+            <img src="<?php echo h(asset_url('assets/room/HS301.jpg')); ?>" alt="Phòng gia đình tại homestay">
         </div>
     </section>
 
