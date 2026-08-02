@@ -30,7 +30,15 @@ CREATE TABLE phong (
     vi_tri VARCHAR(150) DEFAULT NULL,
     huong_view VARCHAR(150) DEFAULT NULL,
     dien_tich DECIMAL(8,2) DEFAULT NULL,
-    tien_nghi TEXT,
+    so_giuong INT NOT NULL DEFAULT 1,
+    loai_giuong ENUM('don', 'doi') NOT NULL DEFAULT 'doi',
+    co_tu_lanh TINYINT(1) NOT NULL DEFAULT 1,
+    co_nha_bep TINYINT(1) NOT NULL DEFAULT 0,
+    co_tivi_may_chieu TINYINT(1) NOT NULL DEFAULT 1,
+    co_bon_tam TINYINT(1) NOT NULL DEFAULT 0,
+    co_ban_cong TINYINT(1) NOT NULL DEFAULT 0,
+    co_sofa TINYINT(1) NOT NULL DEFAULT 0,
+    co_cua_so TINYINT(1) NOT NULL DEFAULT 1,
     duong_dan_hinh VARCHAR(255) NOT NULL,
     hinh_2 VARCHAR(255) DEFAULT NULL,
     hinh_3 VARCHAR(255) DEFAULT NULL,
@@ -90,12 +98,12 @@ INSERT INTO loai_phong (ten_loai_phong, mo_ta, suc_chua, gia_theo_gio, gia_theo_
 ('Phòng đôi sân hiên', 'Phòng 2 giường rộng rãi, có sân hiên riêng thoáng mát, phù hợp cho 2–4 khách.', 3, 170000, 780000),
 ('Phòng VIP gia đình', 'Phòng rộng cho nhóm gia đình, view đẹp và đầy đủ tiện nghi.', 5, 260000, 1300000);
 
-INSERT INTO phong (id_loai_phong, ma_so_phong, ten_phong, tang, vi_tri, huong_view, dien_tich, tien_nghi, duong_dan_hinh, hinh_2, hinh_3, hinh_4, trang_thai) VALUES
-(1, 'HS101', 'Hướng biển 101', 1, 'Dãy A - tầng 1', 'Biển phía Đông', 24, 'Máy lạnh, tủ lạnh mini, máy nước nóng, Wi-Fi, phòng tắm riêng', 'assets/room/1.jpg', 'assets/room/2.jpg', 'assets/room/3.jpg', NULL, 'dang_hoat_dong'),
-(1, 'HS102', 'Hướng biển 102', 1, 'Dãy A - tầng 1', 'Biển phía Đông', 24, 'Máy lạnh, tủ lạnh mini, máy nước nóng, Wi-Fi, phòng tắm riêng', 'assets/room/2.jpg', 'assets/room/1.jpg', 'assets/room/4.jpg', NULL, 'dang_hoat_dong'),
-(2, 'HS201', 'Phòng sân hiên 201', 2, 'Dãy A - tầng 2', 'Sân hiên và đồi', 32, 'Máy lạnh, tủ lạnh mini, sân hiên, máy nước nóng, Wi-Fi', 'assets/room/3.jpg', 'assets/room/4.jpg', 'assets/room/5.jpg', NULL, 'dang_hoat_dong'),
-(2, 'HS202', 'Phòng sân hiên 202', 2, 'Dãy A - tầng 2', 'Sân hiên và đồi', 32, 'Máy lạnh, tủ lạnh mini, sân hiên, máy nước nóng, Wi-Fi', 'assets/room/4.jpg', 'assets/room/3.jpg', 'assets/room/6.jpg', NULL, 'tu_sua'),
-(3, 'HS301', 'Phòng VIP gia đình 301', 3, 'Dãy B - tầng 3', 'Toàn cảnh biển', 48, 'Máy lạnh, tủ lạnh, bếp nhỏ, sofa, bồn tắm, Wi-Fi', 'assets/room/5.jpg', 'assets/room/6.jpg', 'assets/room/1.jpg', NULL, 'dang_hoat_dong');
+INSERT INTO phong (id_loai_phong, ma_so_phong, ten_phong, tang, vi_tri, huong_view, dien_tich, so_giuong, loai_giuong, co_tu_lanh, co_nha_bep, co_tivi_may_chieu, co_bon_tam, co_ban_cong, co_sofa, co_cua_so, duong_dan_hinh, hinh_2, hinh_3, hinh_4, trang_thai) VALUES
+(1, 'HS101', 'Hướng biển 101', 1, 'Dãy A - tầng 1', 'Biển phía Đông', 24, 1, 'doi', 1, 0, 1, 0, 0, 0, 1, 'assets/room/1.jpg', 'assets/room/2.jpg', 'assets/room/3.jpg', NULL, 'dang_hoat_dong'),
+(1, 'HS102', 'Hướng biển 102', 1, 'Dãy A - tầng 1', 'Biển phía Đông', 24, 1, 'doi', 1, 0, 1, 0, 0, 0, 1, 'assets/room/2.jpg', 'assets/room/1.jpg', 'assets/room/4.jpg', NULL, 'dang_hoat_dong'),
+(2, 'HS201', 'Phòng sân hiên 201', 2, 'Dãy A - tầng 2', 'Sân hiên và đồi', 32, 2, 'doi', 1, 0, 1, 0, 1, 1, 1, 'assets/room/3.jpg', 'assets/room/4.jpg', 'assets/room/5.jpg', NULL, 'dang_hoat_dong'),
+(2, 'HS202', 'Phòng sân hiên 202', 2, 'Dãy A - tầng 2', 'Sân hiên và đồi', 32, 2, 'don', 1, 0, 1, 0, 1, 0, 1, 'assets/room/4.jpg', 'assets/room/3.jpg', 'assets/room/6.jpg', NULL, 'tu_sua'),
+(3, 'HS301', 'Phòng VIP gia đình 301', 3, 'Dãy B - tầng 3', 'Toàn cảnh biển', 48, 2, 'doi', 1, 1, 1, 1, 1, 1, 1, 'assets/room/5.jpg', 'assets/room/6.jpg', 'assets/room/1.jpg', NULL, 'dang_hoat_dong');
 
 INSERT INTO dat_phong (id_phong, ho_ten, so_dien_thoai, email, dia_chi, ngay_nhan_phong, ngay_tra_phong, kieu_dat, so_luong, tong_tien, nguon_dat, trang_thai, ghi_chu) VALUES
 (1, 'Nguyễn Văn An', '0909000111', 'an@example.com', 'Rạch Giá, Kiên Giang', '2026-08-16 14:00:00', '2026-08-18 12:00:00', 'ngay', 2, 1100000, 'web', 'da_xac_nhan', 'Khách muốn phòng yên tĩnh.'),

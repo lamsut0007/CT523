@@ -324,17 +324,179 @@ th {
     width: 14%;
 }
 
-.room-table th:nth-child(7),
-.room-table td:nth-child(7) {
-    width: 10%;
+.admin-card {
+    background: rgba(255, 253, 248, 0.95);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 20px 28px 28px 28px;
+    box-shadow: 0 14px 30px rgba(24, 43, 48, 0.08);
+    width: 90%;
 }
 
-.room-thumb {
-    width: 96px;
-    height: 64px;
-    object-fit: cover;
-    border-radius: 12px;
+.room-admin-form-card {
+    background: rgba(255, 253, 248, 0.95);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 20px 28px 28px 28px;
+    box-shadow: 0 14px 30px rgba(24, 43, 48, 0.08);
+    width: 80%;
+}
+
+.room-admin-list-card {
+    background: rgba(255, 253, 248, 0.95);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 20px 28px 28px 28px;
+    box-shadow: 0 14px 30px rgba(24, 43, 48, 0.08);
+}
+
+.room-admin-list-intro {
+    margin-bottom: 20px;
+}
+
+.room-admin-list-intro h2 {
+    margin: 0 0 6px;
+    font-size: 22px;
+}
+
+.room-admin-list-intro p {
+    margin: 0;
+    color: var(--muted);
+}
+
+.admin-dashboard {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.summary-card {
+    background: rgba(255, 253, 248, 0.95);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: 0 14px 30px rgba(24, 43, 48, 0.06);
+}
+
+.summary-card strong {
     display: block;
+    color: var(--sea-deep);
+    font-size: 34px;
+    line-height: 1;
+    font-weight: 700;
+}
+
+.summary-card span {
+    display: block;
+    margin-top: 8px;
+    color: var(--muted);
+}
+
+.admin-action-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.admin-action-card h2 {
+    margin: 0 0 8px;
+    font-weight: 700;
+}
+
+.admin-action-card p {
+    margin: 0;
+    color: var(--muted);
+}
+
+.login-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.login-card {
+    width: min(420px, 100%);
+    background: rgba(255, 253, 248, 0.96);
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    padding: 26px;
+    box-shadow: 0 18px 40px rgba(24, 43, 48, 0.12);
+}
+
+.login-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.login-brand-mark {
+    height: 60px;
+    display: block;
+}
+
+.login-card h1 {
+    margin: 0 0 8px;
+    font-weight: 700;
+}
+
+.login-card p {
+    color: var(--muted);
+}
+
+.login-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.login-card form button {
+    width: 100%;
+    max-width: 240px;
+    margin: 18px auto 0;
+    padding: 14px 0;
+    font-size: 16px;
+}
+
+th {
+    text-align: center;
+}
+
+.room-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.room-table th,
+.room-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--line);
+    text-align: center;
+    vertical-align: middle;
+}
+
+.room-table th {
+    background: rgba(248, 243, 233, 0.9);
+}
+
+.room-table th:nth-child(2),
+.room-table td:nth-child(2) {
+    text-align: left;
+}
+
+
+.room-thumb {
+    width: 100px;
+    height: 66px;
+    object-fit: cover;
+    border-radius: 10px;
+    display: block;
+    margin: 0 auto;
 }
 
 .room-image-link {
@@ -436,6 +598,59 @@ th {
     margin: 0;
 }
 
+/* Override cho checkbox & select Tiện nghi */
+.room-admin-form-section .room-admin-form-grid input[type="checkbox"],
+input[type="checkbox"].amenity-checkbox {
+    width: 17px !important;
+    height: 17px !important;
+    min-height: 0 !important;
+    flex: 0 0 17px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    cursor: pointer;
+    accent-color: var(--sea);
+}
+
+.room-admin-form-section .room-admin-form-grid label.amenity-label {
+    display: inline-flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 8px !important;
+    min-height: 0 !important;
+    cursor: pointer;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: #334155;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    padding: 8px 12px;
+    border-radius: 8px;
+    user-select: none;
+    transition: all 0.15s ease;
+}
+
+.room-admin-form-section .room-admin-form-grid label.amenity-label:hover {
+    border-color: var(--sea);
+    background: #f0fdfa;
+}
+
+.room-admin-form-section .room-admin-form-grid label.amenity-select-label {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 8px !important;
+    min-height: 0 !important;
+    font-size: 0.88rem;
+    font-weight: 500;
+}
+
+.room-admin-form-section .room-admin-form-grid label.amenity-select-label select {
+    width: auto !important;
+    min-height: 36px !important;
+    padding: 4px 10px !important;
+    border-radius: 8px !important;
+}
+
 .room-admin-form-section .room-admin-actions {
     display: flex;
     margin-top: 12px;
@@ -464,29 +679,57 @@ th {
 .room-action-stack {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 8px;
+    width: 100%;
+    max-width: 160px;
+    margin: 0 auto;
 }
 
 .room-action-stack form {
+    width: 100%;
     margin: 0;
 }
 
+/* Layout chung cho cả 2 nút */
+.room-action-stack a.button-small,
 .room-action-stack button {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
-    height: 32px;
-    padding: 0 16px;
-    background: #dc3545;
-    color: #ffffff;
-    border: none;
+    width: 100%;
+    height: 38px;
+    padding: 0 8px;
+    box-sizing: border-box;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
     border-radius: 999px;
     font-size: 13px;
     font-weight: 700;
     cursor: pointer;
-    box-shadow: none;
     transition: background 0.15s, transform 0.12s;
-    white-space: nowrap;
+}
+
+/* Nút Sửa thông tin — teal gradient (kế thừa .button) */
+.room-action-stack a.button-small {
+    background: linear-gradient(135deg, var(--sea), var(--sea-deep));
+    color: #ffffff;
+    border: none;
+    box-shadow: 0 6px 16px rgba(15, 78, 93, 0.22);
+}
+
+.room-action-stack a.button-small:hover {
+    filter: brightness(1.07);
+    transform: translateY(-1px);
+}
+
+/* Nút Xóa phòng — đỏ */
+.room-action-stack button {
+    background: #dc3545;
+    color: #ffffff;
+    border: none;
+    box-shadow: none;
 }
 
 .room-action-stack button:hover:not(:disabled) {
@@ -800,7 +1043,7 @@ input:focus {
     flex: 1 1 auto;
 }
 
-.room-info > p:not(.room-meta):not(.price):not(.muted):not(.room-card-cta) {
+.room-info>p:not(.room-meta):not(.price):not(.muted):not(.room-card-cta) {
     margin: 0 0 10px;
     line-height: 1.55;
 }
@@ -826,7 +1069,7 @@ input:focus {
     line-height: 1.45;
 }
 
-.room-info > .muted {
+.room-info>.muted {
     margin: 0 0 18px;
     color: var(--sea-deep);
     font-size: 16px;
@@ -2635,11 +2878,6 @@ input:focus {
     box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.12);
 }
 
-.bk-textarea {
-    resize: vertical;
-    min-height: 80px;
-}
-
 .bk-err-msg {
     font-size: 0.78rem;
     color: #c0392b;
@@ -2933,7 +3171,7 @@ input:focus {
     margin-top: 0;
 }
 
-.admin-main > .admin-container > .alert {
+.admin-main>.admin-container>.alert {
     margin-bottom: 24px;
 }
 
@@ -3055,249 +3293,6 @@ input:focus {
 }
 
 .booking-table thead th {
-    background: rgba(248, 243, 233, 0.9);
-    font-weight: 700;
-    font-size: 14px;
-    color: var(--sea-deep);
-    white-space: nowrap;
-    text-align: center;
-}
-
-.booking-table th:first-child,
-.booking-table td:first-child {
-    text-align: left;
-}
-
-.booking-table tbody tr:last-child td {
-    border-bottom: none;
-}
-
-.booking-table tbody tr:hover {
-    background: rgba(28, 107, 122, 0.03);
-}
-
-/* conflict row highlight */
-.booking-row--conflict {
-    background: rgba(255, 237, 200, 0.3) !important;
-}
-
-.booking-row--conflict:hover {
-    background: rgba(255, 237, 200, 0.5) !important;
-}
-
-/* ── Status badges ── */
-.booking-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 125px;
-    height: 32px;
-    padding: 0 10px;
-    border-radius: 999px;
-    font-size: 13px;
-    font-weight: 700;
-    white-space: nowrap;
-    box-shadow: none;
-    text-align: center;
-}
-
-.booking-badge--pending {
-    background: #fff1d6;
-    color: #7a5015;
-}
-
-.booking-badge--confirmed {
-    background: #eaf5ef;
-    color: var(--sea-deep);
-}
-
-.booking-badge--done {
-    background: #e8f0fe;
-    color: #1a56db;
-}
-
-.booking-badge--cancelled {
-    background: #7f8c8d;
-    color: #ffffff;
-}
-
-/* Badge trùng lịch (Tối mờ hơn màu chờ xác nhận, hover hiện thời gian trùng) */
-.booking-badge--conflict {
-    background: #e6d3af;
-    color: #634010;
-    width: 125px;
-    height: 32px;
-    padding: 0 10px;
-    border-radius: 999px;
-    font-size: 13px;
-    font-weight: 700;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    cursor: help;
-    border: 1px solid #d4c09a;
-    opacity: 0.88;
-    box-shadow: none;
-    transition: background 0.15s, transform 0.12s, opacity 0.15s;
-}
-
-.booking-badge--conflict:hover {
-    background: #dcc89f;
-    opacity: 1;
-    transform: translateY(-1px);
-}
-
-/* Status cell – toggle button + badge nằm giữa */
-.booking-status-cell {
-    text-align: center;
-}
-
-.booking-status-cell form {
-    margin: 0;
-}
-
-/* Date col */
-.booking-date-cell {
-    white-space: nowrap;
-    font-size: 13px;
-}
-
-/* ── Toggle button ── */
-.booking-toggle-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 125px;
-    height: 32px;
-    padding: 0 10px;
-    border: none;
-    border-radius: 999px;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: none;
-    transition: background 0.15s, transform 0.12s;
-    white-space: nowrap;
-}
-
-.booking-toggle-btn--pending {
-    background: #fff1d6;
-    color: #7a5015;
-    border: 1px solid #f0dfb8;
-    box-shadow: none;
-}
-
-.booking-toggle-btn--pending:hover {
-    background: #ffe8bd;
-    transform: translateY(-1px);
-}
-
-.booking-toggle-btn--confirmed {
-    background: #eaf5ef;
-    color: var(--sea-deep);
-    border: 1px solid #cce5d8;
-    box-shadow: none;
-}
-
-.booking-toggle-btn--confirmed:hover {
-    background: #d4ede0;
-    transform: translateY(-1px);
-}
-
-/* ── Delete button (Nền đỏ chữ trắng) ── */
-.booking-delete-cell {
-    text-align: center;
-    width: 70px;
-}
-
-.booking-delete-cell form {
-    margin: 0;
-}
-
-.booking-delete-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    height: 32px;
-    padding: 0 16px;
-    background: #dc3545;
-    color: #ffffff;
-    border: none;
-    border-radius: 999px;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: none;
-    transition: background 0.15s, transform 0.12s;
-    white-space: nowrap;
-}
-
-.booking-delete-btn:hover {
-    background: #c82333;
-    transform: translateY(-1px);
-}
-
-/* ── Misc ── */
-.booking-note {
-    font-size: 12px;
-    color: var(--muted);
-    font-style: italic;
-}
-
-.booking-email {
-    font-size: 12px;
-    color: var(--muted);
-}
-
-.booking-sublabel {
-    font-size: 12px;
-    color: var(--muted);
-    font-weight: 600;
-}
-
-.booking-date-pair {
-    display: inline-grid;
-    grid-template-columns: min-content 1fr;
-    column-gap: 8px;
-    row-gap: 2px;
-    align-items: center;
-    white-space: nowrap;
-}
-
-.booking-price {
-    cursor: help;
-    border-bottom: 1px dashed rgba(28, 107, 122, 0.3);
-}
-
-.booking-empty {
-    color: var(--muted);
-    text-align: center;
-    padding: 24px 0;
-}
-
-/* New reservation/admin views */
-.bk-form-card,
-.bk-side-card,
-.suggestion-card {
-    background: rgba(255, 253, 248, 0.96);
-    border: 1px solid var(--line);
-    border-radius: 18px;
-    padding: 24px;
-    box-shadow: 0 12px 30px rgba(24, 43, 48, 0.07);
-}
-
-.resort-map {
-    padding-top: 34px;
-}
-
-.resort-map-grid {
-    display: grid;
-    grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1.2fr);
-    gap: 18px;
-    align-items: stretch;
-}
-
-.resort-map-area {
     min-height: 170px;
     position: relative;
     overflow: hidden;
@@ -3316,9 +3311,28 @@ input:focus {
     font-weight: 700;
 }
 
-.map-label-sea { top: 18px; left: 14px; color: #16606f; }
-.map-label-garden { right: 14px; bottom: 18px; color: #49612c; }
-.map-path { position: absolute; width: 70%; height: 38px; left: 15%; top: 52%; border: 5px solid rgba(255,255,255,.72); border-radius: 50%; transform: rotate(-12deg); }
+.map-label-sea {
+    top: 18px;
+    left: 14px;
+    color: #16606f;
+}
+
+.map-label-garden {
+    right: 14px;
+    bottom: 18px;
+    color: #49612c;
+}
+
+.map-path {
+    position: absolute;
+    width: 70%;
+    height: 38px;
+    left: 15%;
+    top: 52%;
+    border: 5px solid rgba(255, 255, 255, .72);
+    border-radius: 50%;
+    transform: rotate(-12deg);
+}
 
 .resort-map-rooms {
     display: flex;
@@ -3338,8 +3352,19 @@ input:focus {
     border-radius: 12px;
 }
 
-.map-floor strong { min-width: 55px; color: var(--sea-deep); }
-.map-floor span { padding: 6px 10px; background: #eaf5ef; color: var(--sea-deep); border-radius: 8px; font-size: 13px; font-weight: 700; }
+.map-floor strong {
+    min-width: 55px;
+    color: var(--sea-deep);
+}
+
+.map-floor span {
+    padding: 6px 10px;
+    background: #eaf5ef;
+    color: var(--sea-deep);
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+}
 
 .bk-room-summary {
     display: flex;
@@ -3376,7 +3401,7 @@ input:focus {
 }
 
 .suggestion-row,
-.suggestion-timeline > div,
+.suggestion-timeline>div,
 .admin-list-item {
     display: flex;
     align-items: center;
@@ -3391,7 +3416,7 @@ input:focus {
     font-weight: 700;
 }
 
-.suggestion-timeline > div {
+.suggestion-timeline>div {
     align-items: flex-start;
     flex-direction: column;
     gap: 4px;
@@ -3409,7 +3434,7 @@ input:focus {
     justify-content: initial;
 }
 
-.admin-list-item > * {
+.admin-list-item>* {
     min-width: 0;
     text-align: left;
 }
@@ -3425,11 +3450,11 @@ input:focus {
     margin-top: 18px;
 }
 
-.admin-two-column > .room-admin-list-card:first-child {
+.admin-two-column>.room-admin-list-card:first-child {
     order: 2;
 }
 
-.admin-two-column > .room-admin-list-card:last-child {
+.admin-two-column>.room-admin-list-card:last-child {
     order: 1;
 }
 
@@ -3438,13 +3463,40 @@ input:focus {
     white-space: pre-line;
 }
 
-.room-table th:nth-child(1), .room-table td:nth-child(1) { width: 14%; }
-.room-table th:nth-child(2), .room-table td:nth-child(2) { width: 20%; }
-.room-table th:nth-child(3), .room-table td:nth-child(3) { width: 14%; }
-.room-table th:nth-child(4), .room-table td:nth-child(4) { width: 12%; }
-.room-table th:nth-child(5), .room-table td:nth-child(5) { width: 16%; }
-.room-table th:nth-child(6), .room-table td:nth-child(6) { width: 14%; }
-.room-table th:nth-child(7), .room-table td:nth-child(7) { width: 10%; }
+.room-table th:nth-child(1),
+.room-table td:nth-child(1) {
+    width: 14%;
+}
+
+.room-table th:nth-child(2),
+.room-table td:nth-child(2) {
+    width: 20%;
+}
+
+.room-table th:nth-child(3),
+.room-table td:nth-child(3) {
+    width: 14%;
+}
+
+.room-table th:nth-child(4),
+.room-table td:nth-child(4) {
+    width: 12%;
+}
+
+.room-table th:nth-child(5),
+.room-table td:nth-child(5) {
+    width: 16%;
+}
+
+.room-table th:nth-child(6),
+.room-table td:nth-child(6) {
+    width: 14%;
+}
+
+.room-table th:nth-child(7),
+.room-table td:nth-child(7) {
+    width: 10%;
+}
 
 .room-action-stack a.button-small,
 .room-action-stack button {
@@ -3508,12 +3560,33 @@ input:focus {
 }
 
 @media (max-width: 800px) {
-    .admin-two-column { grid-template-columns: 1fr; }
-    .suggestion-row { align-items: flex-start; flex-direction: column; gap: 6px; }
-    .admin-list-item { grid-template-columns: 1fr; gap: 4px; }
-    .admin-list-item small { text-align: left; }
-    .status-form { flex-direction: column; align-items: stretch; }
-    .resort-map-grid { grid-template-columns: 1fr; }
+    .admin-two-column {
+        grid-template-columns: 1fr;
+    }
+
+    .suggestion-row {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .admin-list-item {
+        grid-template-columns: 1fr;
+        gap: 4px;
+    }
+
+    .admin-list-item small {
+        text-align: left;
+    }
+
+    .status-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .resort-map-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* ── Responsive ── */

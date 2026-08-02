@@ -149,7 +149,9 @@ include "includes/header.php";
 
         <div class="room-list">
             <?php if (count($danhSachPhong) > 0) { ?>
-                <?php foreach ($danhSachPhong as $phong) { ?>
+                <?php foreach ($danhSachPhong as $phong) { 
+                    $dsTienNhi = danh_sach_tien_nghi_phong($phong);
+                ?>
                     <article class="room-card room-card-clickable"
                         data-id="<?php echo h($phong["id_phong"]); ?>"
                         data-ma="<?php echo h($phong["ma_so_phong"]); ?>"
@@ -160,6 +162,7 @@ include "includes/header.php";
                         data-gia-ngay="<?php echo (float)$phong["gia_theo_ngay"]; ?>"
                         data-gia-gio="<?php echo (float)$phong["gia_theo_gio"]; ?>"
                         data-hinh="<?php echo h(asset_url($phong["duong_dan_hinh"])); ?>"
+                        data-tien-nghi-json='<?php echo h(json_encode($dsTienNhi, JSON_UNESCAPED_UNICODE)); ?>'
                         role="button"
                         tabindex="0"
                         aria-label="Xem chi tiết phòng <?php echo h($phong["ten_phong"]); ?>">
@@ -179,6 +182,7 @@ include "includes/header.php";
                                 <span>Loại phòng: <?php echo h($phong["ten_loai_phong"]); ?></span>
                                 <span>Sức chứa: <?php echo h($phong["suc_chua"]); ?> khách</span>
                             </p>
+
                             <p class="price"><?php echo tien_viet_nam($phong["gia_theo_ngay"]); ?> / đêm</p>
                             <p class="muted"><?php echo tien_viet_nam($phong["gia_theo_gio"]); ?> / giờ</p>
                             <p class="room-card-cta">Nhấn để xem chi tiết &amp; tính giá <span class="room-card-arrow" aria-hidden="true">→</span></p>
@@ -217,6 +221,11 @@ include "includes/header.php";
             <h2 class="room-modal-title" id="modal-title"></h2>
             <p class="room-modal-desc" id="modal-mota"></p>
             <div class="room-modal-meta" id="modal-meta"></div>
+
+            <div class="room-modal-amenities-section" style="margin-top: 14px;">
+                <h4 style="margin:0 0 8px; font-size:0.95rem; color:#475569; font-weight:600; text-transform:uppercase; letter-spacing:0.03em;">Tiện nghi phòng</h4>
+                <div id="modal-amenities" style="display:flex; flex-wrap:wrap; gap:8px 14px; color:#1e293b; font-size:0.9rem;"></div>
+            </div>
 
             <hr class="room-modal-divider">
 
@@ -580,6 +589,27 @@ include "includes/header.php";
         metaEl.innerHTML      = 'Sức chứa: <strong>&nbsp; ' + sucChua + ' khách </strong>' +
                                 '  &nbsp; &nbsp;  Giá một đêm: <strong>&nbsp; ' + fmtMoney(giaNgay) + '</strong>' +
                                 '  &nbsp; &nbsp;  Giá một giờ: <strong>&nbsp; ' + fmtMoney(giaGio) + '</strong>';
+
+        var amenitiesEl = document.getElementById('modal-amenities');
+        if (amenitiesEl) {
+            var tnList = [];
+            try {
+                tnList = JSON.parse(card.dataset.tienNghiJson || '[]');
+            } catch (e) {}
+            var html = '';
+            if (tnList && tnList.length) {
+                tnList.forEach(function(tn) {
+                    html += '<span style="display:inline-flex; align-items:center; gap:6px; background:#f8fafc; border:1px solid #cbd5e1; padding:5px 10px; border-radius:6px; font-weight:500;">' +
+                            '<span style="display:inline-flex; align-items:center; color:#0f172a;">' + tn.icon + '</span>' +
+                            '<span>' + tn.label + '</span>' +
+                            '</span>';
+                });
+            } else {
+                html = '<span style="color:#64748b;">Chưa cập nhật tiện nghi</span>';
+            }
+            amenitiesEl.innerHTML = html;
+        }
+
         inputLuong.value = 1;
         setLoai('dem');
 

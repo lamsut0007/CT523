@@ -251,6 +251,20 @@ include "includes/header.php";
                 </div>
             </div>
 
+            <div class="bk-room-amenities" style="margin-top: 14px;">
+                <h4 style="margin: 0 0 8px; font-size: 0.85rem; color: #475569; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em;">Tiện nghi</h4>
+                <div style="display:flex; flex-wrap:wrap; gap:6px; color:#1e293b; font-size:0.82rem;">
+                    <?php 
+                    $dsTienNhi = danh_sach_tien_nghi_phong($phong);
+                    foreach ($dsTienNhi as $tn) { ?>
+                        <span style="display:inline-flex; align-items:center; gap:4px; background:#f8fafc; border:1px solid #cbd5e1; padding:3px 8px; border-radius:5px; font-weight:500;">
+                            <span style="display:inline-flex; align-items:center; color:#0f172a;"><?php echo $tn['icon']; ?></span>
+                            <span><?php echo h($tn['label']); ?></span>
+                        </span>
+                    <?php } ?>
+                </div>
+            </div>
+
             <div class="room-modal-calendar-section" style="margin-top: 18px;">
                 <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
                     <h3 class="room-modal-calc-title" style="margin: 0;">Lịch tình trạng phòng</h3>

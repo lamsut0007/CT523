@@ -135,11 +135,77 @@ function phong_select_sql()
 {
     return "SELECT p.id_phong, p.id_loai_phong, p.ma_so_phong, p.ten_phong,
                    p.duong_dan_hinh, p.hinh_2, p.hinh_3, p.hinh_4,
-                   p.dien_tich, p.tien_nghi, p.tang, p.vi_tri, p.huong_view,
+                   p.dien_tich, p.so_giuong, p.loai_giuong, p.co_tu_lanh, p.co_nha_bep,
+                   p.co_tivi_may_chieu, p.co_bon_tam, p.co_ban_cong,
+                   p.co_sofa, p.co_cua_so, p.tang, p.vi_tri, p.huong_view,
                    p.gia_theo_gio AS gia_phong_gio, p.gia_theo_ngay AS gia_phong_ngay,
                    p.trang_thai, lp.ten_loai_phong, lp.mo_ta, lp.suc_chua,
                    lp.gia_theo_gio, lp.gia_theo_ngay
             FROM phong p INNER JOIN loai_phong lp ON p.id_loai_phong = lp.id_loai_phong";
+}
+
+function danh_sach_tien_nghi_phong($phong)
+{
+    $list = array();
+    $soGiuong = isset($phong['so_giuong']) ? (int)$phong['so_giuong'] : 1;
+    $loaiGiuong = (isset($phong['loai_giuong']) && $phong['loai_giuong'] === 'don') ? 'giường đơn' : 'giường đôi';
+    $list[] = array(
+        'key' => 'giuong',
+        'label' => $soGiuong . ' ' . $loaiGiuong,
+        'icon' => '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4v16M2 8h20v12M2 17h20M6 8v3M10 8v3"/><path d="M6 11h12"/></svg>'
+    );
+    if (!empty($phong['co_tu_lanh'])) {
+        $list[] = array(
+            'key' => 'tu_lanh',
+            'label' => 'Tủ lạnh',
+            'icon' => '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="5" y1="10" x2="19" y2="10"/><line x1="9" y1="6" x2="9" y2="8"/><line x1="9" y1="14" x2="9" y2="17"/></svg>'
+        );
+    }
+    if (!empty($phong['co_nha_bep'])) {
+        $list[] = array(
+            'key' => 'nha_bep',
+            'label' => 'Nhà bếp',
+            'icon' => '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.8V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v10.8"/><path d="M3 13.8h18a1 1 0 0 1 1 1V21a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-6.2a1 1 0 0 1 1-1z"/><circle cx="7" cy="18" r="1"/><circle cx="12" cy="18" r="1"/></svg>'
+        );
+    }
+    if (!empty($phong['co_tivi_may_chieu'])) {
+        $list[] = array(
+            'key' => 'tivi_may_chieu',
+            'label' => 'TV / Máy chiếu',
+            'icon' => '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="13" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></svg>'
+        );
+    }
+    
+    // Phòng tắm: Mặc định luôn có phòng tắm máy nước nóng, nếu co_bon_tam = 1 thì ghi rõ Có bồn tắm
+    $labelTam = !empty($phong['co_bon_tam']) ? 'Phòng tắm có bồn tắm & nước nóng' : 'Phòng tắm máy nước nóng';
+    $list[] = array(
+        'key' => 'nha_tam',
+        'label' => $labelTam,
+        'icon' => '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h6M12 3v3M4 12h16a1 1 0 0 1 1 1v3a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-3a1 1 0 0 1 1-1z"/><path d="M6 12V5a2 2 0 0 1 2-2h3"/><line x1="4" y1="20" x2="5" y2="22"/><line x1="20" y1="20" x2="19" y2="22"/></svg>'
+    );
+
+    if (!empty($phong['co_ban_cong'])) {
+        $list[] = array(
+            'key' => 'ban_cong',
+            'label' => 'Ban công',
+            'icon' => '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M3 10h18M4 10v11M8 10v11M12 10v11M16 10v11M20 10v11M3 6h18M5 6V3M19 6V3"/></svg>'
+        );
+    }
+    if (!empty($phong['co_sofa'])) {
+        $list[] = array(
+            'key' => 'sofa',
+            'label' => 'Sofa',
+            'icon' => '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3"/><path d="M2 11a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-5z"/><path d="M4 18v2M20 18v2"/></svg>'
+        );
+    }
+    if (!empty($phong['co_cua_so'])) {
+        $list[] = array(
+            'key' => 'cua_so',
+            'label' => 'Cửa sổ',
+            'icon' => '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="3" y1="12" x2="21" y2="12"/></svg>'
+        );
+    }
+    return $list;
 }
 
 function lay_phong_dang_hoat_dong($conn, $ngayNhanPhong, $ngayTraPhong, $soKhach, $gioNhanPhong = '14:00', $gioTraPhong = '12:00')
