@@ -3,7 +3,7 @@ $pageTitle = "Danh sách phòng - OASIS Homestay";
 include "includes/db.php";
 include "includes/functions.php";
 
-// ── JSON: lịch đặt phòng (thay thế file api/ riêng) ─────────────────────────
+
 if (isset($_GET['action']) && $_GET['action'] === 'calendar') {
     header('Content-Type: application/json; charset=utf-8');
     header('Cache-Control: no-store');
@@ -17,7 +17,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'calendar') {
     }
     exit;
 }
-// ─────────────────────────────────────────────────────────────────────────────
+
 
 $ngayNhanPhong = isset($_GET["ngay_nhan_phong"]) ? trim($_GET["ngay_nhan_phong"]) : "";
 $ngayTraPhong = isset($_GET["ngay_tra_phong"]) ? trim($_GET["ngay_tra_phong"]) : "";
@@ -67,7 +67,7 @@ if ($ngayNhanPhong !== '' && $ngayTraPhong !== '' && count($danhSachPhong) === 0
 include "includes/header.php";
 ?>
 
-<!-- ─── Hero uốn lượn ────────────────────────────────────────────────── -->
+<!-- --- Hero uốn lượn -------------------------------------------------- -->
 <section class="rv-hero">
     <div class="rv-hero-inner">
         <p class="eyebrowlight">OASIS Homestay</p>
@@ -346,12 +346,12 @@ include "includes/header.php";
 
 <script>
 (function () {
-    // ── Helpers ──────────────────────────────────────────────────────────────
+    // -- Helpers --------------------------------------------------------------
     function fmtMoney(n) {
         return n.toLocaleString('vi-VN') + ' đồng';
     }
 
-    // ── State ─────────────────────────────────────────────────────────────────
+    // -- State -----------------------------------------------------------------
     var state = {
         giaGio: 0,
         giaNgay: 0,
@@ -361,7 +361,7 @@ include "includes/header.php";
         sucChua: 2
     };
 
-    // ── DOM refs ─────────────────────────────────────────────────────────────
+    // -- DOM refs -------------------------------------------------------------
     var overlay    = document.getElementById('room-modal');
     var closeBtn   = document.getElementById('modal-close-btn');
     var imgEl      = document.getElementById('modal-img');
@@ -382,7 +382,7 @@ include "includes/header.php";
     var dotsWrap   = document.getElementById('gallery-dots');
     var activeCard = null;
 
-    // ── Gallery state ─────────────────────────────────────────────────────────
+    // -- Gallery state ---------------------------------------------------------
     var gallery = { imgs: [], cur: 0 };
 
     function getOrCreateModalPlaceholder() {
@@ -454,14 +454,14 @@ include "includes/header.php";
         });
     })();
 
-    // ── Calculate & render total ──────────────────────────────────────────────
+    // -- Calculate & render total ----------------------------------------------
     function renderTotal() {
         var donGia = state.loaiThue === 'dem' ? state.giaNgay : state.giaGio;
         var total  = donGia * state.soLuong;
         totalEl.textContent = fmtMoney(total);
     }
 
-    // ── Stepper helper ────────────────────────────────────────────────────────
+    // -- Stepper helper --------------------------------------------------------
     function bindStepper(minusId, plusId, inputEl, getVal, setVal, min, max) {
         document.getElementById(minusId).addEventListener('click', function () {
             var v = getVal();
@@ -481,7 +481,7 @@ include "includes/header.php";
         null
     );
 
-    // ── Toggle booking type ───────────────────────────────────────────────────
+    // -- Toggle booking type ---------------------------------------------------
     function setLoai(loai) {
         state.loaiThue = loai;
         if (loai === 'dem') {
@@ -499,7 +499,7 @@ include "includes/header.php";
     btnDem.addEventListener('click', function () { setLoai('dem'); });
     btnGio.addEventListener('click', function () { setLoai('gio'); });
 
-    // ── Calendar helpers ──────────────────────────────────────────────────────
+    // -- Calendar helpers ------------------------------------------------------
     var THANG_VI = ['Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6',
                     'Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'];
     var THU_VI   = ['CN','T2','T3','T4','T5','T6','T7'];
@@ -655,7 +655,7 @@ include "includes/header.php";
             });
     }
 
-    // ── Open modal ────────────────────────────────────────────────────────────
+    // -- Open modal ------------------------------------------------------------
     function openModal(card) {
         if (activeCard) activeCard.classList.remove('room-card-active');
         activeCard = card;
@@ -733,7 +733,7 @@ include "includes/header.php";
         closeBtn.focus();
     }
 
-    // ── Close modal ───────────────────────────────────────────────────────────
+    // -- Close modal -----------------------------------------------------------
     function closeModal() {
         overlay.hidden = true;
         document.body.classList.remove('modal-open');
@@ -748,7 +748,7 @@ include "includes/header.php";
         if (e.key === 'Escape' && !overlay.hidden) closeModal();
     });
 
-    // ── Bind cards ────────────────────────────────────────────────────────────
+    // -- Bind cards ------------------------------------------------------------
     var cards = document.querySelectorAll('.room-card-clickable');
     cards.forEach(function (card) {
         card.addEventListener('click', function () { openModal(card); });

@@ -2,7 +2,7 @@
 $pageTitle = "Đánh giá - OASIS Homestay";
 include "includes/db.php";
 
-/* ─── Xử lý gửi đánh giá ────────────────────────────────────────────── */
+
 $formSuccess = false;
 $formError   = "";
 
@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["action"]) && $_POST["
     }
 }
 
-/* ─── Lấy danh sách đánh giá ─────────────────────────────────────────── */
+
 $reviews    = [];
 $avgRating  = 0;
 $totalCount = 0;
@@ -62,7 +62,7 @@ if ($conn !== null) {
     }
 }
 
-/* ─── Helper: render sao ─────────────────────────────────────────────── */
+
 function renderStars(int $count, bool $small = false): string {
     $cls = $small ? "star-sm" : "star-md";
     $out = '<span class="stars-display ' . $cls . '">';
@@ -73,7 +73,7 @@ function renderStars(int $count, bool $small = false): string {
     return $out;
 }
 
-/* ─── Helper: màu avatar ─────────────────────────────────────────────── */
+
 $avatarPalette = [
     "#1c6b7a","#0f4e5d","#b98b2d","#5d7177","#2e7d6e",
     "#7a5015","#4a6fa5","#6b5b95","#2d6a4f","#c77542"
@@ -87,7 +87,7 @@ function avatarColor(string $name, array $palette): string {
 include "includes/header.php";
 ?>
 
-<!-- ─── Hero nhỏ ──────────────────────────────────────────────────────── -->
+<!-- --- Hero nhỏ -------------------------------------------------------- -->
 <section class="rv-hero">
     <div class="rv-hero-inner">
         <p class="eyebrowlight">OASIS Homestay</p>
@@ -101,7 +101,7 @@ include "includes/header.php";
 
 <main>
 
-    <!-- ─── Tổng quan đánh giá ─────────────────────────────────────────── -->
+    <!-- --- Tổng quan đánh giá ------------------------------------------- -->
     <?php if ($totalCount > 0): ?>
     <section class="rv-summary-band">
         <div class="rv-summary-left">
@@ -130,7 +130,7 @@ include "includes/header.php";
 
     <div class="rv-layout">
 
-        <!-- ─── Cột trái: form gửi đánh giá ──────────────────────────── -->
+        <!-- --- Cột trái: form gửi đánh giá ---------------------------- -->
         <aside class="rv-form-col">
             <div class="rv-form-card">
                 <h2 class="rv-form-title">
@@ -212,7 +212,7 @@ include "includes/header.php";
             </div>
         </aside>
 
-        <!-- ─── Cột phải: danh sách review ───────────────────────────── -->
+        <!-- --- Cột phải: danh sách review ----------------------------- -->
         <section class="rv-list-col">
             <div class="rv-list-header">
                 <h2 class="rv-list-title">
@@ -237,7 +237,7 @@ include "includes/header.php";
                     $initial = mb_strtoupper(mb_substr(trim($r["ho_ten"]), 0, 1, "UTF-8"), "UTF-8");
                     $bgColor = avatarColor($r["ho_ten"], $avatarPalette);
                     $dateStr = date("d/m/Y", strtotime($r["ngay_tao"]));
-                    $hidden  = $idx >= 6; // ẩn từ card thứ 7 trở đi ban đầu
+                    $hidden  = $idx >= 6; 
                 ?>
                 <div class="rv-card <?= $hidden ? "rv-card-hidden" : "" ?>" 
                      data-index="<?= $idx ?>">
@@ -274,7 +274,7 @@ include "includes/header.php";
 </main>
 
 <script>
-/* ─── Star picker hint ────────────────────────────────────────────────── */
+/* --- Star picker hint -------------------------------------------------- */
 const hints = { 1:"Rất tệ", 2:"Tệ", 3:"Bình thường", 4:"Tốt", 5:"Xuất sắc!" };
 document.querySelectorAll('#star-picker input[type="radio"]').forEach(radio => {
     radio.addEventListener('change', () => {
@@ -283,7 +283,7 @@ document.querySelectorAll('#star-picker input[type="radio"]').forEach(radio => {
     });
 });
 
-/* ─── Load more cards ────────────────────────────────────────────────── */
+/* --- Load more cards -------------------------------------------------- */
 function loadMoreReviews() {
     const hidden = document.querySelectorAll('.rv-card-hidden');
     hidden.forEach((card, i) => {
@@ -296,7 +296,7 @@ function loadMoreReviews() {
     if (btn) btn.closest('.rv-load-more-wrap').remove();
 }
 
-/* ─── Animate cards on load ──────────────────────────────────────────── */
+/* --- Animate cards on load -------------------------------------------- */
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => {
         if (e.isIntersecting) {

@@ -598,7 +598,7 @@ th {
     margin: 0;
 }
 
-/* Override cho checkbox & select Tiện nghi */
+
 .room-admin-form-section .room-admin-form-grid input[type="checkbox"],
 input[type="checkbox"].amenity-checkbox {
     width: 17px !important;
@@ -691,7 +691,7 @@ input[type="checkbox"].amenity-checkbox {
     margin: 0;
 }
 
-/* Layout chung cho cả 2 nút */
+
 .room-action-stack a.button-small,
 .room-action-stack button {
     display: flex;
@@ -711,7 +711,7 @@ input[type="checkbox"].amenity-checkbox {
     transition: background 0.15s, transform 0.12s;
 }
 
-/* Nút Sửa thông tin — teal gradient (kế thừa .button) */
+
 .room-action-stack a.button-small {
     background: linear-gradient(135deg, var(--sea), var(--sea-deep));
     color: #ffffff;
@@ -724,7 +724,7 @@ input[type="checkbox"].amenity-checkbox {
     transform: translateY(-1px);
 }
 
-/* Nút Xóa phòng — đỏ */
+
 .room-action-stack button {
     background: #dc3545;
     color: #ffffff;
@@ -1342,7 +1342,7 @@ input:focus {
     }
 }
 
-/* ─── Room card  -  clickable ─────────────────────────────────────────────── */
+
 .room-card-clickable {
     cursor: pointer;
     transition: transform 0.5s ease, box-shadow 0.5s ease;
@@ -1357,7 +1357,7 @@ input:focus {
     opacity: 1;
 }
 
-/* Hover overlay on card image */
+
 .room-card-hover-overlay {
     position: absolute;
     inset: 0;
@@ -1384,13 +1384,13 @@ input:focus {
     border: 1px solid rgba(255, 255, 255, 0.25);
 }
 
-/* Active card highlight */
+
 .room-card-active {
     outline: 2.5px solid var(--sea);
     outline-offset: 2px;
 }
 
-/* ─── Fixed overlay modal ───────────────────────────────────────────────── */
+
 .room-modal-overlay {
     position: fixed;
     inset: 0;
@@ -1417,14 +1417,14 @@ input:focus {
     width: min(1180px, 96%);
     max-height: min(90vh, 90dvh);
     overflow: hidden;
-    /* box clips - does NOT scroll */
+    
     background: var(--paper);
     border-radius: 22px;
     box-shadow: 0 32px 80px rgba(8, 22, 28, 0.38);
     display: grid;
     grid-template-columns: minmax(0, 1fr) 680px;
     grid-template-rows: 1fr;
-    /* single row fills the max-height */
+    
     animation: modal-slide-up 0.28s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -1440,7 +1440,7 @@ input:focus {
     }
 }
 
-/* ─── Close button ──────────────────────────────────────────────────────── */
+
 .room-modal-close {
     position: absolute;
     top: 12px;
@@ -1467,7 +1467,7 @@ input:focus {
     filter: none;
 }
 
-/* ─── Modal image column ────────────────────────────────────────────────── */
+
 .room-modal-image-wrap {
     position: relative;
     border-radius: 22px 0 0 22px;
@@ -1498,17 +1498,17 @@ input:focus {
     backdrop-filter: blur(4px);
 }
 
-/* ─── Modal body column ─────────────────────────────────────────────────── */
+
 .room-modal-body {
     padding: 32px;
     display: flex;
     flex-direction: column;
     gap: 0;
     overflow-y: auto;
-    /* only THIS column scrolls if needed */
+    
     min-height: 0;
     min-width: 0;
-    /* critical: lets grid child honour parent max-height */
+    
     scrollbar-width: thin;
     scrollbar-color: var(--line) transparent;
 }
@@ -1542,7 +1542,7 @@ input:focus {
     margin: 14px 0;
 }
 
-/* ─── Calculator section ────────────────────────────────────────────────── */
+
 .room-modal-calc-title {
     margin: 0 0 14px;
     font-size: 15px;
@@ -1567,7 +1567,7 @@ input:focus {
     margin-bottom: 8px;
 }
 
-/* Stepper */
+
 .room-modal-stepper {
     display: flex;
     align-items: center;
@@ -1622,7 +1622,7 @@ input:focus {
     -webkit-appearance: none;
 }
 
-/* Type toggle */
+
 .room-modal-type-toggle {
     display: flex;
     gap: 6px;
@@ -1665,7 +1665,7 @@ input:focus {
     filter: brightness(1.05);
 }
 
-/* Total price */
+
 .room-modal-total-wrap {
     background: linear-gradient(135deg, rgba(28, 107, 122, 0.08), rgba(255, 228, 187, 0.35));
     border: 1px solid rgba(28, 107, 122, 0.2);
@@ -1696,7 +1696,7 @@ input:focus {
     line-height: 1.5;
 }
 
-/* ─── Contact section ───────────────────────────────────────────────────── */
+
 .room-modal-contact-title {
     margin: 0 0 12px;
     font-size: 16px;
@@ -1764,9 +1764,9 @@ input:focus {
     margin-top: 2px;
 }
 
-/* ─── Modal responsive ──────────────────────────────────────────────────── */
 
-/* Mobile: stack dọc, ảnh nhỏ lại, nội dung scroll bên trong */
+
+
 @media (max-width: 700px) {
     .room-modal-overlay {
         padding: 10px;
@@ -1777,7 +1777,7 @@ input:focus {
         width: 100%;
         grid-template-columns: 1fr;
         grid-template-rows: 180px 1fr;
-        /* ảnh cố định 180px, body còn lại */
+        
         max-height: min(92vh, 92dvh);
         border-radius: 22px 22px 0 0;
     }
@@ -1809,11 +1809,9 @@ input:focus {
     }
 }
 
-/* ══════════════════════════════════════════════════════════════════════════
-   TRANG ĐÁNH GIÁ - feedback.php
-   ══════════════════════════════════════════════════════════════════════════ */
 
-/* ─── Hero ─────────────────────────────────────────────────────────────── */
+
+
 .rv-hero {
     position: relative;
     min-height: 280px;
@@ -1868,7 +1866,7 @@ input:focus {
     background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 48'%3E%3Cpath fill='%23f7f2e8' d='M0,32 C360,0 1080,64 1440,16 L1440,48 L0,48Z'/%3E%3C/svg%3E") no-repeat bottom / cover;
 }
 
-/* ─── Summary band ──────────────────────────────────────────────────────── */
+
 .rv-summary-band {
     display: flex;
     gap: 40px;
@@ -1947,7 +1945,7 @@ input:focus {
     flex-shrink: 0;
 }
 
-/* ─── Stars display ─────────────────────────────────────────────────────── */
+
 .stars-display {
     display: inline-flex;
     gap: 2px;
@@ -1970,7 +1968,7 @@ input:focus {
     color: #ddd;
 }
 
-/* ─── Layout 2 cột ──────────────────────────────────────────────────────── */
+
 .rv-layout {
     display: grid;
     grid-template-columns: 380px 1fr;
@@ -1979,7 +1977,7 @@ input:focus {
     margin: 0 0 60px;
 }
 
-/* ─── Form card ─────────────────────────────────────────────────────────── */
+
 .rv-form-col {
     position: sticky;
     top: 80px;
@@ -2014,7 +2012,7 @@ input:focus {
     line-height: 1.55;
 }
 
-/* Alert */
+
 .rv-alert {
     display: flex;
     align-items: flex-start;
@@ -2052,7 +2050,7 @@ input:focus {
     color: #7a5015;
 }
 
-/* Star picker */
+
 .rv-star-field {
     margin-top: 16px;
     margin-bottom: 16px;
@@ -2098,7 +2096,7 @@ input:focus {
     font-weight: normal;
 }
 
-/* CSS star rating magic */
+
 .rv-star-picker label:hover,
 .rv-star-picker label:hover~label,
 .rv-star-picker input:checked~label {
@@ -2117,7 +2115,7 @@ input:focus {
     transition: color 0.15s;
 }
 
-/* Fields */
+
 .rv-form {
     display: flex;
     flex-direction: column;
@@ -2186,7 +2184,7 @@ input:focus {
     box-shadow: 0 14px 36px rgba(15, 78, 93, 0.3);
 }
 
-/* ─── Review list ───────────────────────────────────────────────────────── */
+
 .rv-list-col {
     min-width: 0;
 }
@@ -2221,7 +2219,7 @@ input:focus {
     padding: 2px 10px;
 }
 
-/* Cards grid */
+
 .rv-cards {
     display: grid;
     gap: 16px;
@@ -2325,7 +2323,7 @@ input:focus {
     padding-top: 14px;
 }
 
-/* Empty state */
+
 .rv-empty {
     text-align: center;
     padding: 56px 24px;
@@ -2349,7 +2347,7 @@ input:focus {
     margin: 0;
 }
 
-/* Load more */
+
 .rv-load-more-wrap {
     text-align: center;
     margin-top: 20px;
@@ -2378,7 +2376,7 @@ input:focus {
     filter: none;
 }
 
-/* ─── Responsive đánh giá ───────────────────────────────────────────────── */
+
 @media (max-width: 860px) {
     .rv-layout {
         grid-template-columns: 1fr;
@@ -2412,14 +2410,12 @@ input:focus {
     }
 }
 
-/* ══════════════════════════════════════════════════════
-   AVAILABILITY CALENDAR (inside room detail modal)
-══════════════════════════════════════════════════════ */
+
 .room-modal-calendar-section {
     margin: 0;
 }
 
-/* Legend row */
+
 .room-cal-legend {
     display: flex;
     flex-wrap: wrap;
@@ -2459,7 +2455,7 @@ input:focus {
     background: var(--sea);
 }
 
-/* Calendar wrapper – horizontal scroll on small screens */
+
 .room-cal-wrap {
     display: flex;
     gap: 16px;
@@ -2476,7 +2472,7 @@ input:focus {
     padding: 8px 0;
 }
 
-/* Individual month block */
+
 .room-cal-month {
     flex: 0 0 auto;
     min-width: 210px;
@@ -2492,14 +2488,14 @@ input:focus {
     text-transform: uppercase;
 }
 
-/* 7-column grid for the calendar */
+
 .room-cal-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 2px;
 }
 
-/* Day-of-week header cells */
+
 .room-cal-dow {
     font-size: 0.68rem;
     font-weight: 600;
@@ -2509,7 +2505,7 @@ input:focus {
     text-transform: uppercase;
 }
 
-/* Individual day cells */
+
 .room-cal-day {
     aspect-ratio: 1;
     display: flex;
@@ -2532,7 +2528,7 @@ input:focus {
     background: transparent;
 }
 
-/* Available */
+
 .room-cal-avail {
     background: #d4f0e8;
     color: #1e6b52;
@@ -2544,7 +2540,7 @@ input:focus {
     background: #b8e8d4;
 }
 
-/* Booked */
+
 .room-cal-booked {
     background: #ffe0e0;
     color: #9c2b2b;
@@ -2552,7 +2548,7 @@ input:focus {
     opacity: 0.9;
 }
 
-/* Today */
+
 .room-cal-today {
     background: var(--sea);
     color: #fff;
@@ -2560,7 +2556,7 @@ input:focus {
     border: 2px solid var(--sea-deep);
 }
 
-/* Past days */
+
 .room-cal-past {
     background: transparent;
     color: #c5cdd0;
@@ -2577,11 +2573,9 @@ input:focus {
     }
 }
 
-/* ════════════════════════════════════════════════════════════════════
-   BOOKING PAGE & MODAL BOOK BUTTON
-════════════════════════════════════════════════════════════════════ */
 
-/* ── Modal: nút Đặt phòng ngay ─────────────────────────────────── */
+
+
 .room-modal-book-wrap {
     display: flex;
     flex-direction: column;
@@ -2624,7 +2618,7 @@ input:focus {
     text-align: center;
 }
 
-/* ── Booking Hero ───────────────────────────────────────────────── */
+
 .bk-hero {
     background: linear-gradient(135deg, var(--sea-deep) 0%, var(--sea) 100%);
     color: #fff;
@@ -2657,14 +2651,14 @@ input:focus {
     max-width: 6400px;
 }
 
-/* ── Booking Main ───────────────────────────────────────────────── */
+
 .bk-main {
     padding: 48px 0 80px;
     width: min(1100px, 92%);
     margin: 0 auto;
 }
 
-/* ── Layout 2 cột ───────────────────────────────────────────────── */
+
 .bk-layout {
     display: grid;
     grid-template-columns: minmax(360px, 420px) minmax(0, 1fr);
@@ -2678,7 +2672,7 @@ input:focus {
     }
 }
 
-/* ── Room card (cột trái) ───────────────────────────────────────── */
+
 .bk-room-card {
     background: var(--paper);
     border: 1px solid var(--line);
@@ -2770,7 +2764,7 @@ input:focus {
     background: var(--sand);
 }
 
-/* ── Form wrap (cột phải) ───────────────────────────────────────── */
+
 .bk-form-wrap {
     background: var(--paper);
     border: 1px solid var(--line);
@@ -2796,7 +2790,7 @@ input:focus {
     margin-bottom: 20px;
 }
 
-/* ── Fieldset ───────────────────────────────────────────────────── */
+
 .bk-fieldset {
     border: 1px solid var(--line);
     border-radius: 12px;
@@ -2813,7 +2807,7 @@ input:focus {
     padding: 0 8px;
 }
 
-/* ── Fields ─────────────────────────────────────────────────────── */
+
 .bk-field {
     display: flex;
     flex-direction: column;
@@ -2884,7 +2878,7 @@ input:focus {
     margin: 0;
 }
 
-/* ── Kiểu thuê toggle ───────────────────────────────────────────── */
+
 .bk-type-toggle {
     display: flex;
     gap: 10px;
@@ -2935,7 +2929,7 @@ input:focus {
     color: #fff;
 }
 
-/* ── Duration ───────────────────────────────────────────────────── */
+
 .bk-duration-row {
     display: flex;
     align-items: baseline;
@@ -2960,7 +2954,7 @@ input:focus {
     text-align: right;
 }
 
-/* ── Tổng tiền ─────────────────────────────────────────────────── */
+
 .bk-total-line {
     display: flex;
     justify-content: space-between;
@@ -2984,7 +2978,7 @@ input:focus {
     text-align: right;
 }
 
-/* ── Submit button ──────────────────────────────────────────────── */
+
 .bk-submit-btn {
     display: block;
     margin: 24px auto 12px;
@@ -3019,7 +3013,7 @@ input:focus {
     margin: 0;
 }
 
-/* ── Success page ───────────────────────────────────────────────── */
+
 .bk-success-wrap {
     display: flex;
     justify-content: center;
@@ -3159,9 +3153,7 @@ input:focus {
     color: #fff;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   Admin – Quản lý đặt phòng
-   ═══════════════════════════════════════════════════════════ */
+
 
 .booking-room-list-section {
     margin-bottom: 28px;
@@ -3175,7 +3167,7 @@ input:focus {
     margin-bottom: 24px;
 }
 
-/* ── Room grid ── */
+
 .booking-room-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -3260,7 +3252,7 @@ input:focus {
     margin-top: 4px;
 }
 
-/* ── Booking list header ── */
+
 .booking-list-header {
     display: flex;
     align-items: flex-start;
@@ -3270,7 +3262,7 @@ input:focus {
     flex-wrap: wrap;
 }
 
-/* ── Booking table ── */
+
 .booking-table-wrap {
     overflow-x: auto;
     border-radius: 12px;
@@ -3311,7 +3303,7 @@ input:focus {
     border: 1px solid var(--line);
 }
 
-/* ── Status badges ── */
+
 .booking-badge {
     display: inline-flex;
     align-items: center;
@@ -3516,7 +3508,7 @@ input:focus {
     order: 1;
 }
 
-/* Fine-tuning admin room table and conflict messages */
+
 .alert {
     white-space: pre-line;
 }
@@ -3647,7 +3639,7 @@ input:focus {
     }
 }
 
-/* ── Responsive ── */
+
 @media (max-width: 700px) {
     .booking-room-grid {
         grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));

@@ -2,14 +2,7 @@
 
 date_default_timezone_set('Asia/Ho_Chi_Minh');
 
-/*
- * Quy ước chung của hệ thống:
- * - Mọi khoảng thời gian đều dùng [nhận, trả), vì vậy khách trả lúc 12:00
- *   thì khách kế tiếp có thể nhận từ 12:00.
- * - Đơn chờ xác nhận vẫn giữ chỗ để tránh hai khách cùng gửi một thời gian.
- * - Khách phải đặt trước ít nhất 1 giờ. Quy tắc này được kiểm tra lại ở PHP,
- *   không chỉ dựa vào min của input HTML.
- */
+
 const BOOKING_MIN_LEAD_SECONDS = 3600;
 
 function h($giaTri)
@@ -127,7 +120,7 @@ function ten_trang_thai_dat($trangThai)
 
 function dat_phong_dang_giu_cho_sql()
 {
-    // Đơn chờ xác nhận chưa khóa lịch; chỉ đơn đã xác nhận/đã nhận phòng mới giữ phòng.
+    
     return "('da_xac_nhan', 'da_nhan_phong')";
 }
 
@@ -177,7 +170,7 @@ function danh_sach_tien_nghi_phong($phong)
         );
     }
     
-    // Phòng tắm: Mặc định luôn có phòng tắm máy nước nóng, nếu co_bon_tam = 1 thì ghi rõ Có bồn tắm
+    
     $labelTam = !empty($phong['co_bon_tam']) ? 'Phòng tắm có bồn tắm & nước nóng' : 'Phòng tắm máy nước nóng';
     $list[] = array(
         'key' => 'nha_tam',

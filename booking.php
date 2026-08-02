@@ -3,7 +3,7 @@ $pageTitle = "Đặt phòng - OASIS Homestay";
 include "includes/db.php";
 include "includes/functions.php";
 
-// ── Lấy tham số từ URL ────────────────────────────────────────────────────
+
 date_default_timezone_set('Asia/Ho_Chi_Minh');
 $now = new DateTimeImmutable('now');
 $nowPlusOne = $now->modify('+1 hour');
@@ -29,14 +29,14 @@ $gioTra   = isset($_GET['gio_tra'])   ? trim($_GET['gio_tra'])     : $defaultGio
 
 $today = date('Y-m-d');
 
-// ── Lấy thông tin phòng ──────────────────────────────────────────────────
+
 $phong = ($idPhong > 0) ? lay_phong_theo_id($conn, $idPhong) : null;
 if ($phong === null) {
     header('Location: rooms.php');
     exit;
 }
 
-// ── Xử lý POST ──────────────────────────────────────────────────────────
+
 $formSuccess = false;
 $maDatPhong  = null;
 $formError   = '';
@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $soLuong      = max(1, (int)($_POST['so_luong'] ?? 1));
     $ghiChu       = trim($_POST['ghi_chu']       ?? '');
 
-    // Validate
+    
     if ($hoTen === '') {
         $fieldErrors['ho_ten'] = 'Vui lòng nhập họ tên.';
     }
@@ -164,7 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 include "includes/header.php";
 ?>
 
-<!-- ── Hero ──────────────────────────────────────────────────────────── -->
+<!-- -- Hero ------------------------------------------------------------ -->
 <section class="bk-hero">
     <div class="bk-hero-inner">
         <p class="eyebrowlight">OASIS Homestay</p>
@@ -177,7 +177,7 @@ include "includes/header.php";
 <main class="bk-main">
 
 <?php if ($formSuccess): ?>
-<!-- ── Thành công ─────────────────────────────────────────────────────── -->
+<!-- -- Thành công ------------------------------------------------------- -->
 <section class="bk-success-wrap">
     <div class="bk-success-box">
         <div class="bk-success-icon" aria-hidden="true">
@@ -221,7 +221,7 @@ include "includes/header.php";
 </section>
 
 <?php else: ?>
-<!-- ── Layout 2 cột ──────────────────────────────────────────────────── -->
+<!-- -- Layout 2 cột ---------------------------------------------------- -->
 <div class="bk-layout">
 
     <!-- Cột trái: thông tin phòng -->
@@ -881,7 +881,7 @@ include "includes/header.php";
     loadBookingCalendar();
     syncDuration();
 
-    // ── Booking page image gallery ──────────────────────────────────────────
+    // -- Booking page image gallery ------------------------------------------
     (function() {
         var imgs = <?php echo json_encode(array_values(array_map('asset_url', $hinhList)), JSON_UNESCAPED_UNICODE); ?>;
         if (!imgs || imgs.length <= 1) return;
